@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gallery</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: white;
+}
+
+h2 {
+    text-align: center;
+    padding: 20px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.card {
+    backdrop-filter: blur(12px);
+    background: rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 10px;
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.card img {
+    width: 100%;
+    border-radius: 10px;
+}
+
+.actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.icon {
+    text-decoration: none;
+    font-size: 22px;
+    cursor: pointer;
+}
+</style>
+
+</head>
+<body>
+{% extends 'uploads/base.html' %}
+
+{% block content %}
+
+<h2 style="text-align:center;">Your Gallery</h2>
+
+<div class="grid">
+    {% for img in images %}
+    <div class="card">
+        <img src="{{ img.image.url }}">
+        <div>
+            <a href="{{ img.image.url }}" download>⬇️</a>
+            <a href="{% url 'delete_image' img.id %}">🗑️</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
+<h2>Your Gallery</h2>
+<div style="text-align:center; margin-bottom: 20px;">
+    <a href="{% url 'upload' %}">
+        <button style="
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            backdrop-filter: blur(10px);
+        ">
+            ⬆️ Upload New Image
+        </button>
+    </a>
+</div>
+
+<div class="grid" id="gallery">
+
+{% for img in images %}
+<div class="card">
+    <img src="{{ img.image.url }}">
+
+    <div class="actions">
+        <a href="{{ img.image.url }}" download class="icon">⬇️</a>
+        <a href="{% url 'delete_image' img.id %}" class="icon"
+           onclick="return confirm('Delete this image?')">🗑️</a>
+    </div>
+</div>
+{% endfor %}
+
+</div>
+
+<script>
+let page = 2;
+let loading = false;
+
+window.onscroll = async () => {
+    if (loading) return;
+
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+        loading = true;
+
+        let res = await fetch(`/gallery-data/?page=${page}`);
+        let data = await res.json();
+
+        let container = document.getElementById("gallery");
+
+        data.forEach(img => {
+            container.innerHTML += `
+            <div class="card">
+                <img src="${img.url}">
+                <div class="actions">
+                    <a href="${img.url}" download class="icon">⬇️</a>
+                    <a href="/delete/${img.id}/" class="icon"
+                       onclick="return confirm('Delete this image?')">🗑️</a>
+                </div>
+            </div>`;
+        });
+
+        page++;
+        loading = false;
+    }
+};
+</script>
+
+</body>
+</html>
