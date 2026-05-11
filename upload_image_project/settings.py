@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-g%-1^p51tc+hg-8p%m64n27zxi05$w!+tlmno-6rk&60*h5__*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 LOGIN_REDIRECT_URL = '/upload/'
 LOGIN_URL = '/login/'
