@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
@@ -12,7 +13,7 @@ urlpatterns = [
 
     # Root URL → Login Page
     path('', RedirectView.as_view(url='/login/', permanent=False)),
-
+    path("test/", lambda request: HttpResponse("Django Working")),
     # Upload App URLs
     path('', include('uploads.urls')),
 
