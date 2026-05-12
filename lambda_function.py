@@ -1,4 +1,4 @@
 from mangum import Mangum
-from upload_image_project.asgi import application
+from upload_image_project.asgi import application #Change to wsgi if needed or if any error occurs
 
-handler = Mangum(application)
+handler = Mangum(application, lifespan="off")

@@ -84,6 +84,9 @@ WSGI_APPLICATION = 'upload_image_project.wsgi.application'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+FORCE_SCRIPT_NAME = ''
+USE_X_FORWARDED_HOST = True
+
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
