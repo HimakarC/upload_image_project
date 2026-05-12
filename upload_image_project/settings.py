@@ -84,7 +84,7 @@ WSGI_APPLICATION = 'upload_image_project.wsgi.application'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-FORCE_SCRIPT_NAME = ''
+FORCE_SCRIPT_NAME = '/prod'
 USE_X_FORWARDED_HOST = True
 
 
