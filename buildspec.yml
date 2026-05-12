@@ -16,11 +16,7 @@ phases:
       - cp manage.py package/
       - cp lambda_function.py package/
 
-  post_build:
-    commands:
-      - cd package
-      - zip -r ../app.zip .
-
 artifacts:
+  base-directory: package
   files:
-    - app.zip
+    - '**/*'
