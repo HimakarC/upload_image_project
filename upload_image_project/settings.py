@@ -29,7 +29,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://nk40wv349c.execute-api.us-east-1.amazonaws.com"
+    "https://nk40wv349c.execute-api.us-east-1.amazonaws.com"  #Change this URL to the respective API Gateway URL
 ]
 
 
@@ -150,5 +150,4 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
