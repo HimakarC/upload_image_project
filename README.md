@@ -488,9 +488,3 @@ Django Application
 - Use compatible Python runtime versions
 - Configure API Gateway proxy routes correctly
 - Ensure Lambda handler is properly configured
-
----
-
-# Author
-
-Himakar C
