@@ -98,6 +98,9 @@ DATABASES = {
         'PASSWORD': 'Suchibala98',
         'HOST': 'database-1.c05smqw0eg8p.us-east-1.rds.amazonaws.com',
         'PORT': '5432',
+        'OPTIONS': {
+            'sslmode': 'require',
+        },
     }
 }
 
