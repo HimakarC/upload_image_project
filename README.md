@@ -197,6 +197,9 @@ DATABASES = {
         'PASSWORD': 'password',
         'HOST': 'rds-endpoint',
         'PORT': '5432',
+        'OPTIONS': {
+            'sslmode': 'require',
+        },
     }
 }
 ```
