@@ -7,17 +7,30 @@ module "network" {
   source = "./modules/network"
 }
 
-module "lambda" {
+resource "aws_lambda_function" "lambda" {
+  function_name = var.function_name
+  role          = aws_iam_role.lambda_role.arn
+  handler       = var.handler
+  runtime       = var.runtime
+  timeout       = 30
 
-  source = "./modules/lambda"
+  # Dummy ZIP only for Terraform creation
+  filename         = "${path.module}/dummy.zip"
+  source_code_hash = filebase64sha256("${path.module}/dummy.zip")
 
-  lambda_name = "${var.environment}-${var.project_name}-lambda"
+  lifecycle {
+    ignore_changes = [
+      filename,
+      source_code_hash,
+      last_modified,
+    ]
+  }
 
-  lambda_zip_path = var.lambda_zip_path
-
-  lambda_handler = var.lambda_handler
-
-  lambda_runtime = var.lambda_runtime
+  environment {
+    variables = {
+      DJANGO_SETTINGS_MODULE = "upload_image_project.settings"
+    }
+  }
 }
 
 module "apigateway" {
