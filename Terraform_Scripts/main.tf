@@ -7,6 +7,26 @@ module "network" {
   source = "./modules/network"
 }
 
+# s3.tf
+resource "aws_s3_bucket" "django_media" {
+  bucket = "your-app-images-${var.environment}"   # Make it unique
+
+  tags = {
+    Name        = "Django Media Bucket"
+    Environment = var.environment
+  }
+}
+
+# Block public access (recommended)
+resource "aws_s3_bucket_public_access_block" "django_media" {
+  bucket = aws_s3_bucket.django_media.id
+
+  block_public_acls       = true   # Set to true if you want fully private
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
 module "lambda" {
   source = "./modules/lambda"
 

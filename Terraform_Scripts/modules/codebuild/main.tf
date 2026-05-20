@@ -58,6 +58,20 @@ resource "aws_codebuild_project" "project" {
     type = "CODEPIPELINE"
   }
 
+  environment_variables = [
+      {
+        name  = "AWS_STORAGE_BUCKET_NAME"
+        value = aws_s3_bucket.django_media.bucket
+        type  = "PLAINTEXT"
+      },
+      {
+        name  = "AWS_S3_REGION_NAME"
+        value = "us-east-1"
+        type  = "PLAINTEXT"
+      }
+    ]
+  }
+
   environment {
 
     compute_type = "BUILD_GENERAL1_SMALL"
