@@ -2,7 +2,7 @@
 
 variable "aws_region" {
 
-  default = "ap-south-1"
+  default = "us-east-1"
 }
 
 # =========================================
@@ -26,17 +26,12 @@ variable "lambda_runtime" {
 
 variable "lambda_handler" {
 
-  default = "lambda_function.lambda_handler"
+  default = "lambda_function.handler"
 }
 
 variable "lambda_zip_path" {
 
-  default = "django_lambda.zip"
-}
-
-variable "github_token" {
-  type      = string
-  sensitive = true
+  default = "dummy.zip"
 }
 
 # DATABASE
