@@ -72,7 +72,7 @@ resource "aws_codepipeline" "pipeline" {
       version          = "1"
       output_artifacts = ["source_output"]
       configuration = {
-        ConnectionArn    = aws_codestarconnections_connection.github.arn
+        ConnectionArn    = arn:aws:codeconnections:us-east-1:566057504080:connection/21d7d256-153b-4a86-bdda-210d6dc65e88
         FullRepositoryId = "HimakarC/upload_image_project"
         BranchName       = "main"
       }
