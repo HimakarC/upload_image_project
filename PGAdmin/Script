@@ -1,0 +1,77 @@
+CREATE TABLE django_migrations (
+    id BIGSERIAL PRIMARY KEY,
+    app VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    applied TIMESTAMP WITH TIME ZONE NOT NULL
+);
+
+CREATE TABLE django_content_type (
+    id BIGSERIAL PRIMARY KEY,
+    app_label VARCHAR(100) NOT NULL,
+    model VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE auth_permission (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    content_type_id BIGINT,
+    codename VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE auth_group (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(150) NOT NULL UNIQUE
+);
+
+CREATE TABLE auth_group_permissions (
+    id BIGSERIAL PRIMARY KEY,
+    group_id BIGINT NOT NULL,
+    permission_id BIGINT NOT NULL
+);
+
+CREATE TABLE auth_user (
+    id BIGSERIAL PRIMARY KEY,
+    password VARCHAR(128) NOT NULL,
+    last_login TIMESTAMP WITH TIME ZONE NULL,
+    is_superuser BOOLEAN NOT NULL,
+    username VARCHAR(150) NOT NULL UNIQUE,
+    first_name VARCHAR(150) NOT NULL,
+    last_name VARCHAR(150) NOT NULL,
+    email VARCHAR(254) NOT NULL,
+    is_staff BOOLEAN NOT NULL,
+    is_active BOOLEAN NOT NULL,
+    date_joined TIMESTAMP WITH TIME ZONE NOT NULL
+);
+
+CREATE TABLE auth_user_groups (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    group_id BIGINT NOT NULL
+);
+
+CREATE TABLE auth_user_user_permissions (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    permission_id BIGINT NOT NULL
+);
+
+CREATE TABLE django_session (
+    session_key VARCHAR(40) PRIMARY KEY,
+    session_data TEXT NOT NULL,
+    expire_date TIMESTAMP WITH TIME ZONE NOT NULL
+);
+
+CREATE INDEX django_session_expire_date_a5c62663
+ON django_session(expire_date);
+
+CREATE TABLE images (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    image VARCHAR(255) NOT NULL,
+    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_user
+        FOREIGN KEY(user_id)
+        REFERENCES auth_user(id)
+        ON DELETE CASCADE
+);
