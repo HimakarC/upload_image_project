@@ -1,3 +1,7 @@
+# =========================================
+# IAM ROLE FOR CODEBUILD
+# =========================================
+
 resource "aws_iam_role" "codebuild_role" {
 
   name = "${var.codebuild_name}-role"
@@ -17,12 +21,29 @@ resource "aws_iam_role" "codebuild_role" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "admin" {
+# =========================================
+# IAM POLICY ATTACHMENT
+# =========================================
+
+resource "aws_iam_role_policy_attachment" "codebuild_policy" {
 
   role = aws_iam_role.codebuild_role.name
 
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
+
+# =========================================
+# CLOUDWATCH LOG GROUP
+# =========================================
+
+resource "aws_cloudwatch_log_group" "codebuild_logs" {
+
+  name = "/aws/codebuild/${var.codebuild_name}"
+}
+
+# =========================================
+# CODEBUILD PROJECT
+# =========================================
 
 resource "aws_codebuild_project" "project" {
 
@@ -30,8 +51,11 @@ resource "aws_codebuild_project" "project" {
 
   service_role = aws_iam_role.codebuild_role.arn
 
+  build_timeout = 30
+
   artifacts {
-    type = "NO_ARTIFACTS"
+
+    type = "CODEPIPELINE"
   }
 
   environment {
@@ -41,14 +65,29 @@ resource "aws_codebuild_project" "project" {
     image = "aws/codebuild/standard:7.0"
 
     type = "LINUX_CONTAINER"
+
+    privileged_mode = true
   }
 
   source {
 
-    type = "GITHUB"
-
-    location = "https://github.com/${var.github_owner}/${var.github_repo}.git"
+    type = "CODEPIPELINE"
 
     buildspec = "buildspec.yml"
+  }
+
+  logs_config {
+
+    cloudwatch_logs {
+
+      group_name = aws_cloudwatch_log_group.codebuild_logs.name
+
+      status = "ENABLED"
+    }
+  }
+
+  tags = {
+    Environment = "dev"
+    Project     = var.codebuild_name
   }
 }
