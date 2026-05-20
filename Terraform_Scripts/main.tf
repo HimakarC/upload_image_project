@@ -26,6 +26,10 @@ module "codepipeline" {
   source = "./modules/codepipeline"
 
   pipeline_name = "${var.project_name}"
+
+  bucket_name = "dev-django-pipeline-bucket"
+
+  codebuild_project_name = module.codebuild.codebuild_project_name
 }
 
 module "apigateway" {
