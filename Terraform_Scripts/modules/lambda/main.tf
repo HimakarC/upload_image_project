@@ -35,7 +35,7 @@ resource "aws_iam_role_policy_attachment" "lambda_basic" {
 resource "aws_lambda_function" "lambda" {
   function_name = var.lambda_name
   role          = aws_iam_role.lambda_role.arn
-  handler       = "lambda_handler.handler"
+  handler       = "lambda_function.handler"
   runtime       = var.lambda_runtime
   timeout       = 30
 
