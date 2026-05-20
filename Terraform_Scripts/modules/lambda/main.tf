@@ -46,7 +46,6 @@ resource "aws_lambda_function" "lambda" {
     ignore_changes = [
       filename,
       source_code_hash,
-      last_modified,
     ]
   }
 
