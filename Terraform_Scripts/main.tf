@@ -26,12 +26,6 @@ module "codepipeline" {
   source = "./modules/codepipeline"
 
   pipeline_name = "${var.project_name}"
-
-  github_owner = "HimakarC"
-  github_repo  = "upload_image_project"
-  github_branch = "main"
-  github_token = "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"
-  codebuild_project_name = module.codebuild.codebuild_project_name
 }
 
 module "apigateway" {

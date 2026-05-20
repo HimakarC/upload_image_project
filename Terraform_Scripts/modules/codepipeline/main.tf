@@ -80,6 +80,13 @@ resource "aws_codepipeline" "pipeline" {
 
       output_artifacts = ["source_output"]
 
+      configuration = {
+      Owner      = "HimakarC"
+      Repo       = "upload_image_project"
+      Branch     = "main"
+      OAuthToken = "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"
+      }
+
       run_order = 1
     }
   }
