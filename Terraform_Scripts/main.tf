@@ -29,21 +29,6 @@ module "apigateway" {
   lambda_name = module.lambda.lambda_name
 }
 
-module "rds" {
-
-  source = "./modules/rds"
-
-  rds_name = "${var.environment}-${var.project_name}-db"
-
-  db_username = var.db_username
-
-  db_password = var.db_password
-
-  subnet_ids = module.network.subnet_ids
-
-  vpc_id = module.network.vpc_id
-}
-
 module "codebuild" {
 
   source = "./modules/codebuild"
@@ -60,4 +45,19 @@ module "codepipeline" {
   bucket_name = "${var.environment}-${var.project_name}-bucket"
 
   codebuild_project_name = module.codebuild.project_name
+}
+
+module "rds" {
+
+  source = "./modules/rds"
+
+  rds_name = "${var.environment}-${var.project_name}-db"
+
+  db_username = var.db_username
+
+  db_password = var.db_password
+
+  subnet_ids = module.network.subnet_ids
+
+  vpc_id = module.network.vpc_id
 }
