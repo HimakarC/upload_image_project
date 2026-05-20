@@ -10,9 +10,12 @@ module "network" {
 module "lambda" {
   source = "./modules/lambda"
 
-  function_name = var.lambda_function_name
-  runtime        = "python3.11"
-  handler        = "lambda_function.handler"
+  lambda_name     = "django-upload-app"
+  lambda_runtime  = "python3.11"
+  lambda_handler  = "lambda_function.lambda_handler"
+
+  # Dummy ZIP for Terraform
+  lambda_zip_path = "./modules/lambda/dummy.zip"
 }
 
 module "apigateway" {

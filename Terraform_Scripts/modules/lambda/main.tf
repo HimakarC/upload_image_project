@@ -1,12 +1,12 @@
 resource "aws_lambda_function" "lambda" {
-  function_name = var.function_name
+  function_name = var.lambda_name
   role          = aws_iam_role.lambda_role.arn
-  handler       = var.handler
-  runtime       = var.runtime
+  handler       = var.lambda_handler
+  runtime       = var.lambda_runtime
   timeout       = 30
 
-  filename         = "${path.module}/dummy.zip"
-  source_code_hash = filebase64sha256("${path.module}/dummy.zip")
+  filename         = var.lambda_zip_path
+  source_code_hash = filebase64sha256(var.lambda_zip_path)
 
   lifecycle {
     ignore_changes = [
