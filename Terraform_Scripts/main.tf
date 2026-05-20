@@ -59,7 +59,7 @@ module "codebuild" {
 
     # === RDS Details ===
     DB_HOST     = module.rds.db_endpoint
-    DB_NAME     = module.rds.rds_database_name
+    DB_NAME     = module.rds.db_name
     DB_USER     = "postgres"
     DB_PASSWORD = var.db_password
     DB_PORT     = "5432"
