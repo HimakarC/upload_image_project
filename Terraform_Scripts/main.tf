@@ -33,6 +33,7 @@ module "lambda" {
   lambda_name     = "django-upload-app"
   lambda_runtime  = "python3.11"
   lambda_handler  = "lambda_function.lambda_handler"
+  s3_media_bucket_name  = module.s3.bucket_name
   lambda_zip_path = "./modules/lambda/dummy.zip"
 }
 
