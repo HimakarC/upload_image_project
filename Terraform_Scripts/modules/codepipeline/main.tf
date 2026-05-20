@@ -81,12 +81,10 @@ resource "aws_codepipeline" "pipeline" {
       output_artifacts = ["source_output"]
 
       configuration = {
-
-        Owner  = "HimakarC"
-
-        Repo   = "upload_image_project"
-
-        Branch = "main"
+        Owner      = "HimakarC"
+        Repo       = "upload_image_project"
+        Branch     = "main"
+        OAuthToken = "YOUR_GITHUB_PAT"
       }
 
       run_order = 1

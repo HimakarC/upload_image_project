@@ -34,6 +34,10 @@ variable "lambda_zip_path" {
   default = "django_lambda.zip"
 }
 
+variable "github_token" {
+  type      = string
+  sensitive = true
+}
 
 # DATABASE
 

@@ -13,9 +13,27 @@ module "lambda" {
   lambda_name     = "django-upload-app"
   lambda_runtime  = "python3.11"
   lambda_handler  = "lambda_function.lambda_handler"
-
-  # Dummy ZIP for Terraform
   lambda_zip_path = "./modules/lambda/dummy.zip"
+}
+
+module "codebuild" {
+  source = "./modules/codebuild"
+
+  codebuild_name = "django-codebuild"
+}
+
+module "codepipeline" {
+  source = "./modules/codepipeline"
+
+  pipeline_name = "dev-django-pipeline"
+
+  github_owner = "HimakarC"
+  github_repo  = "upload_image_project"
+  github_branch = "main"
+
+  github_token = var.github_token
+
+  codebuild_project_name = module.codebuild.codebuild_project_name
 }
 
 module "apigateway" {
@@ -27,24 +45,6 @@ module "apigateway" {
   lambda_invoke_arn = module.lambda.lambda_invoke_arn
 
   lambda_name = module.lambda.lambda_name
-}
-
-module "codebuild" {
-
-  source = "./modules/codebuild"
-
-  codebuild_name = "${var.environment}-${var.project_name}-build"
-}
-
-module "codepipeline" {
-
-  source = "./modules/codepipeline"
-
-  pipeline_name = "${var.environment}-${var.project_name}-pipeline"
-
-  bucket_name = "${var.environment}-${var.project_name}-bucket"
-
-  codebuild_project_name = module.codebuild.project_name
 }
 
 module "rds" {
