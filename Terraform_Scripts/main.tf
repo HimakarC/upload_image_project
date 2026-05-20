@@ -42,10 +42,6 @@ module "codebuild" {
   source = "./modules/codebuild"
 
   codebuild_name = "${var.environment}-${var.project_name}-build"
-
-  github_owner = var.github_owner
-
-  github_repo = var.github_repo
 }
 
 module "codepipeline" {
