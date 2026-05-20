@@ -32,7 +32,7 @@ resource "aws_security_group" "rds_sg" {
 
 resource "aws_db_instance" "postgres" {
 
-  engine = "postgresql"
+  engine = "postgres"
 
   engine_version = "16"
 
