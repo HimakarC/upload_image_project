@@ -93,8 +93,6 @@ module "rds" {
 
   source = "./modules/rds"
 
-  rds_name = "${var.environment}-${var.project_name}-db"
-
   db_name = var.db_username
 
   db_username = var.db_username
