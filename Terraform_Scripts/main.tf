@@ -1,3 +1,8 @@
+module "network" {
+
+  source = "./modules/network"
+}
+
 module "lambda" {
 
   source = "./modules/lambda"
@@ -32,9 +37,9 @@ module "rds" {
 
   db_password = var.db_password
 
-  subnet_ids = var.subnet_ids
+  subnet_ids = module.network.subnet_ids
 
-  vpc_id = var.vpc_id
+  vpc_id = module.network.vpc_id
 }
 
 module "codebuild" {
