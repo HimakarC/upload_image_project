@@ -40,8 +40,8 @@ module "lambda" {
     AWS_S3_REGION_NAME      = "us-east-1"
 
     # === RDS Details ===
-    DB_HOST     = aws_db_instance.rds.endpoint
-    DB_NAME     = aws_db_instance.rds.db_name
+    DB_HOST     = module.aws_db_instance.rds.db_endpoint
+    DB_NAME     = module.aws_db_instance.rds.rds_database_name
     DB_USER     = "postgres"
     DB_PASSWORD = var.db_password
     DB_PORT     = "5432"
@@ -58,8 +58,8 @@ module "codebuild" {
     AWS_S3_REGION_NAME      = "us-east-1"
 
     # === RDS Details ===
-    DB_HOST     = aws_db_instance.rds.endpoint
-    DB_NAME     = aws_db_instance.rds.db_name
+    DB_HOST     = moudle.aws_db_instance.rds.db_endpoint
+    DB_NAME     = module.aws_db_instance.rds.rds_database_name
     DB_USER     = "postgres"
     DB_PASSWORD = var.db_password
     DB_PORT     = "5432"
