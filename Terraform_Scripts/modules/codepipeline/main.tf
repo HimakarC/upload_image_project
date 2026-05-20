@@ -1,7 +1,15 @@
-resource "aws_s3_bucket" "bucket" {
+# =========================================
+# S3 BUCKET FOR PIPELINE ARTIFACTS
+# =========================================
+
+resource "aws_s3_bucket" "pipeline_bucket" {
 
   bucket = var.bucket_name
 }
+
+# =========================================
+# IAM ROLE FOR CODEPIPELINE
+# =========================================
 
 resource "aws_iam_role" "pipeline_role" {
 
@@ -22,12 +30,20 @@ resource "aws_iam_role" "pipeline_role" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "admin" {
+# =========================================
+# IAM POLICY ATTACHMENT
+# =========================================
+
+resource "aws_iam_role_policy_attachment" "pipeline_policy" {
 
   role = aws_iam_role.pipeline_role.name
 
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
+
+# =========================================
+# CODEPIPELINE
+# =========================================
 
 resource "aws_codepipeline" "pipeline" {
 
@@ -37,10 +53,14 @@ resource "aws_codepipeline" "pipeline" {
 
   artifact_store {
 
-    location = aws_s3_bucket.bucket.bucket
+    location = aws_s3_bucket.pipeline_bucket.bucket
 
     type = "S3"
   }
+
+  # ======================================
+  # SOURCE STAGE
+  # ======================================
 
   stage {
 
@@ -48,7 +68,7 @@ resource "aws_codepipeline" "pipeline" {
 
     action {
 
-      name = "Source"
+      name = "GitHub-Source"
 
       category = "Source"
 
@@ -62,16 +82,20 @@ resource "aws_codepipeline" "pipeline" {
 
       configuration = {
 
-        Owner = var.github_owner
+        Owner  = "HimakarC"
 
-        Repo = var.github_repo
+        Repo   = "upload_image_project"
 
-        Branch = var.github_branch
-
-        OAuthToken = var.github_token
+        Branch = "main"
       }
+
+      run_order = 1
     }
   }
+
+  # ======================================
+  # BUILD STAGE
+  # ======================================
 
   stage {
 
@@ -79,7 +103,7 @@ resource "aws_codepipeline" "pipeline" {
 
     action {
 
-      name = "Build"
+      name = "CodeBuild"
 
       category = "Build"
 
@@ -87,15 +111,18 @@ resource "aws_codepipeline" "pipeline" {
 
       provider = "CodeBuild"
 
+      version = "1"
+
       input_artifacts = ["source_output"]
 
       output_artifacts = ["build_output"]
 
-      version = "1"
-
       configuration = {
+
         ProjectName = var.codebuild_project_name
       }
+
+      run_order = 1
     }
   }
 }

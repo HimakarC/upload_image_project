@@ -56,13 +56,5 @@ module "codepipeline" {
 
   bucket_name = "${var.environment}-${var.project_name}-bucket"
 
-  github_owner = var.github_owner
-
-  github_repo = var.github_repo
-
-  github_branch = var.github_branch
-
-  github_token = var.github_token
-
   codebuild_project_name = module.codebuild.project_name
 }

@@ -21,12 +21,3 @@ variable "subnet_ids" {
 }
 
 variable "vpc_id" {}
-
-# GitHub
-variable "github_owner" {}
-variable "github_repo" {}
-variable "github_branch" {}
-
-variable "github_token" {
-  sensitive = true
-}
