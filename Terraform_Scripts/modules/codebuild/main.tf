@@ -70,7 +70,7 @@ resource "aws_codebuild_project" "project" {
 
      environment_variable {
       name  = "AWS_STORAGE_BUCKET_NAME"
-      value = var.s3_media_bucket_name          # We'll pass this from root
+      value = aws_s3_bucket.django_media.bucket          # We'll pass this from root
       type  = "PLAINTEXT"
     }
 
