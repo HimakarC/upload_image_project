@@ -19,11 +19,6 @@ phases:
       # Create ZIP from INSIDE package directory
       - cd package
       - zip -r ../django_lambda.zip .
-      - cd ..
-
-  post_build:
-    commands:
-      - aws lambda update-function-code --function-name django-upload-app --zip-file fileb://django_lambda.zip
 
 artifacts:
   files:
