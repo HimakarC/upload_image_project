@@ -96,7 +96,6 @@ if not AWS_STORAGE_BUCKET_NAME:
     raise ImproperlyConfigured("AWS_STORAGE_BUCKET_NAME environment variable is required!")
 AWS_S3_REGION_NAME = os.environ.get("AWS_S3_REGION_NAME", "us-east-1")
 AWS_QUERYSTRING_AUTH = False
-AWS_DEFAULT_ACL = 'public-read'
 
 # Optional (clean URLs)
 MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/"
