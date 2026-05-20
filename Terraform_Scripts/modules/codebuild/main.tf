@@ -68,18 +68,17 @@ resource "aws_codebuild_project" "project" {
 
     privileged_mode = true
 
-    environment_variables = [
-      {
-        name  = "AWS_STORAGE_BUCKET_NAME"
-        value = var.s3_media_bucket_name
-        type  = "PLAINTEXT"
-      },
-      {
-        name  = "AWS_S3_REGION_NAME"
-        value = "us-east-1"
-        type  = "PLAINTEXT"
-      }
-    ]
+     environment_variable {
+      name  = "AWS_STORAGE_BUCKET_NAME"
+      value = var.s3_media_bucket_name          # We'll pass this from root
+      type  = "PLAINTEXT"
+    }
+
+    environment_variable {
+      name  = "AWS_S3_REGION_NAME"
+      value = "us-east-1"
+      type  = "PLAINTEXT"
+    }
   }
 
   source {
