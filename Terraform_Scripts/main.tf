@@ -39,7 +39,7 @@ module "lambda" {
 
 module "codebuild" {
   source = "./modules/codebuild"
-
+  s3_media_bucket_name  = aws_s3_bucket.django_media.bucket
   codebuild_name = "django-codebuild"
 }
 
