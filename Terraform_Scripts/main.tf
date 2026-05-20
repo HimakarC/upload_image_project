@@ -38,6 +38,13 @@ module "lambda" {
     DJANGO_SETTINGS_MODULE  = "upload_image_project.settings"
     AWS_STORAGE_BUCKET_NAME = aws_s3_bucket.django_media.bucket
     AWS_S3_REGION_NAME      = "us-east-1"
+
+    # === RDS Details ===
+    DB_HOST     = aws_db_instance.postgres.endpoint
+    DB_NAME     = aws_db_instance.postgres.db_name
+    DB_USER     = "postgres"
+    DB_PASSWORD = var.db_password
+    DB_PORT     = "5432"
   }
 }
 
@@ -49,6 +56,13 @@ module "codebuild" {
   environment_variables = {
     AWS_STORAGE_BUCKET_NAME = aws_s3_bucket.django_media.bucket
     AWS_S3_REGION_NAME      = "us-east-1"
+
+    # === RDS Details ===
+    DB_HOST     = aws_db_instance.postgres.endpoint
+    DB_NAME     = aws_db_instance.postgres.db_name
+    DB_USER     = "postgres"
+    DB_PASSWORD = var.db_password
+    DB_PORT     = "5432"
   }
 
 }
