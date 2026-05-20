@@ -95,6 +95,8 @@ module "rds" {
 
   rds_name = "${var.environment}-${var.project_name}-db"
 
+  db_name = module.rds.db_name
+
   db_username = var.db_username
 
   db_password = var.db_password
