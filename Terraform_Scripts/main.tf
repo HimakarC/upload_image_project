@@ -29,7 +29,7 @@ module "codepipeline" {
 
   bucket_name = "dev-django-pipeline-bucket"
 
-  codebuild_project_name = module.codebuild.codebuild_name
+  codebuild_project_name = module.codebuild.project_name
 }
 
 module "apigateway" {
