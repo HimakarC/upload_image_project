@@ -84,7 +84,7 @@ resource "aws_codepipeline" "pipeline" {
         Owner      = "HimakarC"
         Repo       = "upload_image_project"
         Branch     = "main"
-        OAuthToken = "YOUR_GITHUB_PAT"
+        OAuthToken = "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"
       }
 
       run_order = 1
