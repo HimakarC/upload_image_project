@@ -3,5 +3,5 @@ output "db_endpoint" {
 }
 
 output "rds_database_name" {
-  value = aws_db_instance.your_rds.db_name
+  value = aws_db_instance.postgres.db_name
 }
