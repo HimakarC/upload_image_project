@@ -425,6 +425,14 @@ $default
 
 ---
 
+## Step-4 : After Connecting to DB
+
+- Open PGAdmin in local Desktop
+- Connect to the DB instance and open Query Tool of that DB
+- Run the script i.e. in DB_Script
+
+---
+
 # Final Project Structure
 
 ```bash

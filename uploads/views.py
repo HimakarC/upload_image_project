@@ -75,8 +75,8 @@ def delete_image(request, image_id):
     image = get_object_or_404(UploadedImage, id=image_id, user=request.user)
 
     # delete file from media
-    if image.image and os.path.isfile(image.image.path):
-        os.remove(image.image.path)
+    if image.image:
+        image.image.delete(save=False)
 
     image.delete()
     return redirect('gallery')
