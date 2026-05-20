@@ -13,7 +13,7 @@ resource "aws_apigatewayv2_integration" "integration" {
 
   integration_uri = var.lambda_invoke_arn
 
-  integration_method = "ANY"
+  integration_method = "POST"
 
   payload_format_version = "2.0"
 }
