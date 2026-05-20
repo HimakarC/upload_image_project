@@ -58,7 +58,7 @@ module "codebuild" {
     AWS_S3_REGION_NAME      = "us-east-1"
 
     # === RDS Details ===
-    DB_HOST     = moudle.rds.db_endpoint
+    DB_HOST     = module.rds.db_endpoint
     DB_NAME     = module.rds.rds_database_name
     DB_USER     = "postgres"
     DB_PASSWORD = var.db_password
