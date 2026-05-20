@@ -58,5 +58,5 @@ resource "aws_db_instance" "postgres" {
 
   tags = {
     Name = var.rds_name
-
+  }
 }
