@@ -63,30 +63,19 @@ resource "aws_codepipeline" "pipeline" {
   # ======================================
 
   stage {
-
     name = "Source"
-
     action {
-
-      name = "GitHub-Source"
-
-      category = "Source"
-
-      owner = "ThirdParty"
-
-      provider = "GitHub"
-
-      version = "1"
-
+      name             = "Source"
+      category         = "Source"
+      owner            = "AWS"
+      provider         = "CodeStarSourceConnection"
+      version          = "1"
       output_artifacts = ["source_output"]
-
       configuration = {
-      Owner      = "HimakarC"
-      Repo       = "upload_image_project"
-      Branch     = "main"
-      OAuthToken = "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"
+        ConnectionArn    = aws_codestarconnections_connection.github.arn
+        FullRepositoryId = "HimakarC/upload_image_project"
+        BranchName       = "main"
       }
-
       run_order = 1
     }
   }
