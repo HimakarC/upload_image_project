@@ -8,4 +8,8 @@ variable "subnet_ids" {
   type = list(string)
 }
 
+variable "rds_name" {
+  type = string
+}
+
 variable "vpc_id" {}
