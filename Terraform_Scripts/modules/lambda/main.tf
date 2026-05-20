@@ -50,10 +50,6 @@ resource "aws_lambda_function" "lambda" {
   }
 
   environment {
-    variables = {
-      DJANGO_SETTINGS_MODULE = "upload_image_project.settings"
-      AWS_STORAGE_BUCKET_NAME = aws_s3_bucket.django_media.bucket     # ← Add this
-      AWS_S3_REGION_NAME      = "us-east-1"
-    }
+    variables = var.environment_variables
   }
 }

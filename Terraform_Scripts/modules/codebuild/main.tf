@@ -68,16 +68,13 @@ resource "aws_codebuild_project" "project" {
 
     privileged_mode = true
 
-     environment_variable {
-      name  = "AWS_STORAGE_BUCKET_NAME"
-      value = aws_s3_bucket.django_media.bucket          # We'll pass this from root
-      type  = "PLAINTEXT"
-    }
-
-    environment_variable {
-      name  = "AWS_S3_REGION_NAME"
-      value = "us-east-1"
-      type  = "PLAINTEXT"
+    dynamic "environment_variable" {
+      for_each = var.environment_variables
+      content {
+        name  = environment_variable.key
+        value = environment_variable.value
+        type  = "PLAINTEXT"
+      }
     }
   }
 

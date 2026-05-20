@@ -35,12 +35,23 @@ module "lambda" {
   lambda_handler  = "lambda_function.lambda_handler"
   s3_media_bucket_name  = module.s3.bucket_name
   lambda_zip_path = "./modules/lambda/dummy.zip"
+  environment_variables = {
+    DJANGO_SETTINGS_MODULE  = "upload_image_project.settings"
+    AWS_STORAGE_BUCKET_NAME = aws_s3_bucket.django_media.bucket
+    AWS_S3_REGION_NAME      = "us-east-1"
+  }
 }
 
 module "codebuild" {
   source = "./modules/codebuild"
-  s3_media_bucket_name  = aws_s3_bucket.django_media.bucket
+
   codebuild_name = "django-codebuild"
+
+  environment_variables = {
+    AWS_STORAGE_BUCKET_NAME = aws_s3_bucket.django_media.bucket
+    AWS_S3_REGION_NAME      = "us-east-1"
+  }
+  
 }
 
 module "codepipeline" {
