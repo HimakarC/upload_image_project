@@ -9,7 +9,7 @@ module "network" {
 
 # s3.tf
 resource "aws_s3_bucket" "django_media" {
-  bucket = "your-app-images-${var.environment}"   # Make it unique
+  bucket = "himakarbhavana-${var.environment}"   # Make it unique
 
   tags = {
     Name        = "Django Media Bucket"
