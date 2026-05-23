@@ -30,7 +30,7 @@ resource "aws_s3_bucket_public_access_block" "django_media" {
 resource "aws_s3_bucket_policy" "public_read_policy" {
   bucket = aws_s3_bucket.django_media.id
   depends_on = [
-    aws_s3_bucket_public_access_block.public_access
+    aws_s3_bucket_public_access_block.django_media
   ]
   policy = jsonencode({
     Version = "2012-10-17"
