@@ -48,7 +48,7 @@ resource "aws_lambda_permission" "permission" {
 
   action = "lambda:InvokeFunction"
 
-  function_name = var.lambda_name
+  function_name = var.lambda_invoke_arn
 
   principal = "apigateway.amazonaws.com"
 
