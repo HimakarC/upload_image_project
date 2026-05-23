@@ -17,6 +17,16 @@ resource "aws_s3_bucket" "django_media" {
   }
 }
 
+# Block public access (recommended)
+resource "aws_s3_bucket_public_access_block" "django_media" {
+  bucket = aws_s3_bucket.django_media.id
+
+  block_public_acls       = false   # Set to true if you want fully private
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
 resource "aws_s3_bucket_policy" "public_read_policy" {
   bucket = aws_s3_bucket.django_media.id
   policy = jsonencode({
@@ -31,16 +41,6 @@ resource "aws_s3_bucket_policy" "public_read_policy" {
       }
     ]
   })
-}
-
-# Block public access (recommended)
-resource "aws_s3_bucket_public_access_block" "django_media" {
-  bucket = aws_s3_bucket.django_media.id
-
-  block_public_acls       = false   # Set to true if you want fully private
-  block_public_policy     = false
-  ignore_public_acls      = false
-  restrict_public_buckets = false
 }
 
 resource "aws_codestarconnections_connection" "github" {
