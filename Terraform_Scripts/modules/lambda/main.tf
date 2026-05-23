@@ -23,28 +23,33 @@ resource "aws_iam_role" "lambda_role" {
 }
 
 resource "aws_iam_policy" "lambda_s3_policy" {
-    policy = jsonencode({
-      Version = "2012-10-17"
-      Statement = [
-        {
-          Effect = "Allow"
-          Action = [
-            "s3:PutObject",
-            "s3:GetObject",
-            "s3:DeleteObject"
-          ]
-          Resource = "arn:aws:s3:::${var.bucket_name}/*"
-        },
-        {
-          Effect = "Allow"
-          Action = [
-            "s3:ListBucket"
-          ]
-          Resource = "arn:aws:s3:::${var.bucket_name}"
-        }
-      ]
-    })
-  }
+  policy = jsonencode({
+    Version = "2012-10-17"
+
+    Statement = [
+      {
+        Effect = "Allow"
+
+        Action = [
+          "s3:PutObject",
+          "s3:GetObject",
+          "s3:DeleteObject"
+        ]
+
+        Resource = "arn:aws:s3:::${var.bucket_name}/*"
+      },
+      {
+        Effect = "Allow"
+
+        Action = [
+          "s3:ListBucket"
+        ]
+
+        Resource = "arn:aws:s3:::${var.bucket_name}"
+      }
+    ]
+  })
+}
 
 
 # =========================================
