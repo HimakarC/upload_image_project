@@ -27,6 +27,12 @@ resource "aws_s3_bucket_public_access_block" "django_media" {
   restrict_public_buckets = false
 }
 
+resource "aws_codestarconnections_connection" "github" {
+  name          = "github-connection"
+  provider_type = "GitHub"
+}
+
+
 module "lambda" {
   source = "./modules/lambda"
 
