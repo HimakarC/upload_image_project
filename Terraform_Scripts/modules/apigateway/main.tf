@@ -11,7 +11,9 @@ resource "aws_apigatewayv2_integration" "integration" {
 
   integration_type = "AWS_PROXY"
 
-  integration_uri = var.lambda_alias_invoke_arn
+  integration_uri = var.lambda_invoke_arn
+
+  integration_method = "POST"
 
   payload_format_version = "2.0"
 }
@@ -41,7 +43,6 @@ resource "aws_lambda_permission" "permission" {
   action = "lambda:InvokeFunction"
 
   function_name = var.lambda_name
-  qualifier     = var.lambda_alias_name
 
   principal = "apigateway.amazonaws.com"
 

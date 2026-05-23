@@ -61,11 +61,6 @@ role       = aws_iam_role.lambda_role.name
 policy_arn = aws_iam_policy.lambda_s3_policy.arn
 }
 
-resource "aws_iam_role_policy_attachment" "basic_execution" {
-  role       = aws_iam_role.lambda_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-}
-
 # =========================================
 # BASIC LAMBDA FUNCTION
 # =========================================
@@ -83,18 +78,4 @@ resource "aws_lambda_function" "lambda" {
   environment {
     variables = var.environment_variables
   }
-}
-
-resource "aws_lambda_function_version" "version" {
-  function_name = aws_lambda_function.lambda.function_name
-}
-
-resource "aws_lambda_alias" "prod" {
-
-  name = "prod"
-
-  function_name = aws_lambda_function.lambda.function_name
-
-  function_version = aws_lambda_function_version.version.version
-  depends_on = [aws_lambda_function_version.version]
 }
