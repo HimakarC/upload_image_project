@@ -5,5 +5,3 @@ output "lambda_name" {
 output "lambda_invoke_arn" {
   value = aws_lambda_function.lambda.invoke_arn
 }
-
-#Just for a sample one
