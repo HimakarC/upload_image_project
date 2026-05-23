@@ -74,7 +74,7 @@ resource "aws_codepipeline" "pipeline" {
       configuration = {
         ConnectionArn    = "arn:aws:codeconnections:us-east-1:566057504080:connection/21d7d256-153b-4a86-bdda-210d6dc65e88"
         FullRepositoryId = "HimakarC/upload_image_project"
-        BranchName       = "main"
+        BranchName       = "dev"
       }
       run_order = 1
     }
