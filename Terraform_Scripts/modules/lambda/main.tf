@@ -88,3 +88,13 @@ resource "aws_lambda_function" "lambda" {
     variables = var.environment_variables
   }
 }
+
+
+resource "aws_lambda_alias" "prod" {
+
+  name = "prod"
+
+  function_name = aws_lambda_function.lambda.function_name
+
+  function_version = aws_lambda_function.lambda.version
+}
