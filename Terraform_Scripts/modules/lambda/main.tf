@@ -22,11 +22,7 @@ resource "aws_iam_role" "lambda_role" {
   })
 }
 
-
-
-
-
-  resource "aws_iam_policy" "lambda_s3_policy" {
+resource "aws_iam_policy" "lambda_s3_policy" {
     policy = jsonencode({
       Version = "2012-10-17"
       Statement = [
@@ -56,29 +52,29 @@ resource "aws_iam_role" "lambda_role" {
 # =========================================
 
 resource "aws_iam_role_policy_attachment" "lambda_basic" {
-  role       = aws_iam_role.lambda_role.name
-  policy_arn = "aws_iam_policy.lambda_s3_policy.arn"
+role       = aws_iam_role.lambda_role.name
+policy_arn = aws_iam_policy.lambda_s3_policy.arn
 }
 
 
 resource "aws_lambda_function" "lambda" {
-  function_name = var.lambda_name
-  role          = aws_iam_role.lambda_role.arn
-  handler       = "lambda_function.handler"
-  runtime       = var.lambda_runtime
-  timeout       = 30
+function_name = var.lambda_name
+role          = aws_iam_role.lambda_role.arn
+handler       = "lambda_function.handler"
+runtime       = var.lambda_runtime
+timeout       = 30
 
-  filename         = var.lambda_zip_path
-  source_code_hash = filebase64sha256(var.lambda_zip_path)
+filename         = var.lambda_zip_path
+source_code_hash = filebase64sha256(var.lambda_zip_path)
 
-  lifecycle {
-    ignore_changes = [
-      filename,
-      source_code_hash,
-    ]
-  }
+lifecycle {
+  ignore_changes = [
+    filename,
+    source_code_hash,
+  ]
+}
 
-  environment {
-    variables = var.environment_variables
-  }
+environment {
+  variables = var.environment_variables
+}
 }
