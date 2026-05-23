@@ -11,3 +11,7 @@ variable "environment_variables" {
   type        = map(string)
   default     = {}
 }
+
+variable "bucket_name" {
+  type = string
+}

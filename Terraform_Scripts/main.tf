@@ -30,6 +30,8 @@ resource "aws_s3_bucket_public_access_block" "django_media" {
 module "lambda" {
   source = "./modules/lambda"
 
+  bucket_name = aws_s3_bucket.django_media.bucket
+  
   lambda_name     = "django-upload-app"
   lambda_runtime  = "python3.11"
   lambda_handler  = "lambda_function.lambda_handler"
