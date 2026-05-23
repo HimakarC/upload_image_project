@@ -56,6 +56,7 @@ module "lambda" {
   
   lambda_name     = "django-upload-app"
   lambda_runtime  = "python3.11"
+  lambda_handler  = "lambda_function.lambda_handler"
   lambda_zip_path = "./modules/lambda/dummy.zip"
   environment_variables = {
     DJANGO_SETTINGS_MODULE  = "upload_image_project.settings"
