@@ -1,0 +1,1 @@
+web: gunicorn upload_image_project.wsgi:application
