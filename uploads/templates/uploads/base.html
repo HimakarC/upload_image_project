@@ -49,6 +49,8 @@
         <a href="{% url 'gallery' %}">Gallery</a>
     </div>
 
+    <p>Hi this is himakar</p>
+
     {% if user.is_authenticated %}
     <form action="{% url 'logout' %}" method="post">
         {% csrf_token %}
