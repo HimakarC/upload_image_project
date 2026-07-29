@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "6.50.0"
+    }
+  }
+}
+
 provider "aws" {
   region = "us-east-1"
 }
@@ -46,7 +55,7 @@ resource "aws_s3_bucket_policy" "public_read_policy" {
   })
 }
 
-resource "aws_codestarconnections_connection" "github" {
+resource "aws_codeconnections_connection" "github" {
   name          = "github-connection"
   provider_type = "GitHub"
 }
