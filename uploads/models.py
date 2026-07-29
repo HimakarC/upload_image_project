@@ -3,16 +3,19 @@ from django.contrib.auth.models import User
 
 
 class UploadedImage(models.Model):
+
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='uploaded_images'
+        related_name="uploaded_images"
     )
 
-    image = models.ImageField(upload_to='uploads/')
+    image = models.ImageField(
+        upload_to="uploads/"
+    )
 
     thumbnail = models.ImageField(
-        upload_to='thumbnails/',
+        upload_to="thumbnails/",
         blank=True,
         null=True
     )
@@ -28,13 +31,11 @@ class UploadedImage(models.Model):
     )
 
     original_size = models.PositiveIntegerField(
-        default=0,
-        help_text="Original file size in bytes"
+        default=0
     )
 
     compressed_size = models.PositiveIntegerField(
-        default=0,
-        help_text="Compressed file size in bytes"
+        default=0
     )
 
     width = models.PositiveIntegerField(
@@ -50,19 +51,27 @@ class UploadedImage(models.Model):
     )
 
     class Meta:
-        db_table = 'images'
-        ordering = ['-uploaded_at']
+        ordering = ["-uploaded_at"]
 
     def __str__(self):
-        return f"{self.original_filename} - {self.user.username}"
+        return (
+            f"{self.original_filename} "
+            f"- {self.user.username}"
+        )
 
     @property
     def compression_percentage(self):
+
         if self.original_size == 0:
             return 0
 
         return round(
-            ((self.original_size - self.compressed_size)
-             / self.original_size) * 100,
+            (
+                (
+                    self.original_size
+                    - self.compressed_size
+                )
+                / self.original_size
+            ) * 100,
             2
         )

@@ -1,48 +1,150 @@
-<div class="navbar">
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+
+        {% block title %}
+
+        Image Upload App
+
+        {% endblock %}
+
+    </title>
+
+
+    <link
+        rel="stylesheet"
+        href="{% static 'uploads/css/style.css' %}"
+    >
+
+</head>
+
+
+<body>
+
+
+<nav class="navbar">
+
+
+    <div class="logo">
+
+        <a href="{% url 'dashboard' %}">
+
+            Image Upload App
+
+        </a>
+
+    </div>
+
+
+    {% if user.is_authenticated %}
+
 
     <div class="nav-links">
 
         <a href="{% url 'dashboard' %}">
+
             Dashboard
+
         </a>
+
 
         <a href="{% url 'upload' %}">
+
             Upload
+
         </a>
+
 
         <a href="{% url 'gallery' %}">
+
             Gallery
+
         </a>
-
-        {% if user.is_staff %}
-
-        <a href="{% url 'admin_dashboard' %}">
-            Admin Dashboard
-        </a>
-
-        {% endif %}
 
     </div>
 
-    {% if user.is_authenticated %}
 
-    <span>
-        Welcome {{ user.username }}
-    </span>
+    <div class="user-section">
 
-    <form
-        action="{% url 'logout' %}"
-        method="post"
-    >
+        <span>
 
-        {% csrf_token %}
+            Welcome,
+            {{ user.username }}
 
-        <button class="logout-btn">
-            Logout
-        </button>
+        </span>
 
-    </form>
+
+        <form
+            method="post"
+            action="{% url 'logout' %}"
+        >
+
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                class="logout-btn"
+            >
+
+                Logout
+
+            </button>
+
+        </form>
+
+    </div>
+
 
     {% endif %}
 
-</div>
+
+</nav>
+
+
+<main class="container">
+
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div class="message">
+
+                {{ message }}
+
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+
+    {% block content %}
+
+    {% endblock %}
+
+
+</main>
+
+
+{% block extra_js %}
+
+{% endblock %}
+
+
+</body>
+
+</html>

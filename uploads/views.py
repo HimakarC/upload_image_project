@@ -1,275 +1,157 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
-from django.core.paginator import Paginator
-from django.contrib.auth.forms import UserCreationForm
 from io import BytesIO
-from PIL import Image
-from django.core.files.base import ContentFile
-from django.db.models import Q, Sum, Count
-from django.contrib.auth.models import User
-from django.contrib.admin.views.decorators import staff_member_required
-from django.utils import timezone
 from datetime import timedelta
-import os
+
+from PIL import Image
+
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.contrib.auth.views import LoginView, LogoutView
+
+from django.core.files.base import ContentFile
+
+from django.db.models import Q, Sum
+
+from django.shortcuts import (
+    render,
+    redirect,
+    get_object_or_404
+)
+
+from django.utils import timezone
 
 from .forms import ImageUploadForm
 from .models import UploadedImage
 
 
-# 🔐 Register
+# =========================================================
+# LOGIN
+# =========================================================
+
+class UserLoginView(LoginView):
+
+    template_name = "uploads/login.html"
+
+    redirect_authenticated_user = True
+
+    def get_success_url(self):
+
+        return "/dashboard/"
+
+
+# =========================================================
+# LOGOUT
+# =========================================================
+
+class UserLogoutView(LogoutView):
+
+    next_page = "/login/"
+
+
+# =========================================================
+# REGISTER
+# =========================================================
+
 def register(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('login')
-    else:
-        form = UserCreationForm()
-    return render(request, 'uploads/register.html', {'form': form})
 
+    if request.user.is_authenticated:
 
-# 📤 Upload Image
-@login_required
-def upload_image(request):
-
-    if request.method == 'POST':
-        form = ImageUploadForm(
-            request.POST,
-            request.FILES
+        return redirect(
+            "dashboard"
         )
 
-        if form.is_valid():
+    if request.method == "POST":
 
-            uploaded_file = form.cleaned_data['image']
-
-            # Open image
-            image = Image.open(uploaded_file)
-
-            # Convert RGBA/P to RGB for JPEG compatibility
-            if image.mode in ('RGBA', 'P'):
-                image = image.convert('RGB')
-
-            original_size = uploaded_file.size
-
-            # Store dimensions
-            width, height = image.size
-
-            # Compress image
-            compressed_buffer = BytesIO()
-
-            image.save(
-                compressed_buffer,
-                format='JPEG',
-                quality=85,
-                optimize=True
-            )
-
-            compressed_buffer.seek(0)
-
-            compressed_size = compressed_buffer.getbuffer().nbytes
-
-            # Create database object
-            img = form.save(commit=False)
-
-            img.user = request.user
-            img.original_filename = uploaded_file.name
-            img.file_type = image.format or 'JPEG'
-            img.original_size = original_size
-            img.compressed_size = compressed_size
-            img.width = width
-            img.height = height
-
-            # Save compressed image
-            base_name = uploaded_file.name.rsplit(
-                '.',
-                1
-            )[0]
-
-            compressed_name = (
-                f"{base_name}.jpg"
-            )
-
-            img.image.save(
-                compressed_name,
-                ContentFile(
-                    compressed_buffer.read()
-                ),
-                save=False
-            )
-
-            img.save()
-
-            # Generate thumbnail
-            image.thumbnail(
-                (400, 400)
-            )
-
-            thumbnail_buffer = BytesIO()
-
-            image.save(
-                thumbnail_buffer,
-                format='JPEG',
-                quality=80,
-                optimize=True
-            )
-
-            thumbnail_buffer.seek(0)
-
-            thumbnail_name = (
-                f"{base_name}_thumb.jpg"
-            )
-
-            img.thumbnail.save(
-                thumbnail_name,
-                ContentFile(
-                    thumbnail_buffer.read()
-                ),
-                save=True
-            )
-
-            return redirect('success')
-
-    else:
-        form = ImageUploadForm()
-
-    return render(
-        request,
-        'uploads/upload.html',
-        {'form': form}
-    )
-
-# ✅ Success Page
-@login_required
-def success(request):
-    return render(request, 'uploads/success.html')
-
-
-# 🖼️ Gallery Page
-@login_required
-def gallery(request):
-
-    images = UploadedImage.objects.filter(
-        user=request.user
-    )
-
-    search = request.GET.get(
-        'search',
-        ''
-    ).strip()
-
-    file_type = request.GET.get(
-        'file_type',
-        ''
-    )
-
-    date_filter = request.GET.get(
-        'date',
-        ''
-    )
-
-    sort = request.GET.get(
-        'sort',
-        'newest'
-    )
-
-    # Search by filename
-    if search:
-        images = images.filter(
-            Q(original_filename__icontains=search)
+        username = request.POST.get(
+            "username"
         )
 
-    # Filter by file type
-    if file_type:
-        images = images.filter(
-            file_type__iexact=file_type
+        email = request.POST.get(
+            "email"
         )
 
-    # Date filtering
-    if date_filter:
+        password = request.POST.get(
+            "password"
+        )
 
-        now = timezone.now()
+        confirm_password = request.POST.get(
+            "confirm_password"
+        )
 
-        if date_filter == 'today':
-            start_date = now - timedelta(days=1)
+        if not username:
 
-        elif date_filter == 'week':
-            start_date = now - timedelta(days=7)
-
-        elif date_filter == 'month':
-            start_date = now - timedelta(days=30)
-
-        else:
-            start_date = None
-
-        if start_date:
-            images = images.filter(
-                uploaded_at__gte=start_date
+            return render(
+                request,
+                "uploads/register.html",
+                {
+                    "error":
+                    "Username is required."
+                }
             )
 
-    # Sorting
-    if sort == 'oldest':
-        images = images.order_by(
-            'uploaded_at'
+        if not password:
+
+            return render(
+                request,
+                "uploads/register.html",
+                {
+                    "error":
+                    "Password is required."
+                }
+            )
+
+        if password != confirm_password:
+
+            return render(
+                request,
+                "uploads/register.html",
+                {
+                    "error":
+                    "Passwords do not match."
+                }
+            )
+
+        if User.objects.filter(
+            username=username
+        ).exists():
+
+            return render(
+                request,
+                "uploads/register.html",
+                {
+                    "error":
+                    "Username already exists."
+                }
+            )
+
+        user = User.objects.create_user(
+
+            username=username,
+
+            email=email,
+
+            password=password
+
         )
 
-    elif sort == 'name':
-        images = images.order_by(
-            'original_filename'
+        login(
+            request,
+            user
         )
 
-    elif sort == 'size':
-        images = images.order_by(
-            '-compressed_size'
-        )
-
-    else:
-        images = images.order_by(
-            '-uploaded_at'
+        return redirect(
+            "dashboard"
         )
 
     return render(
         request,
-        'uploads/gallery.html',
-        {
-            'images': images,
-            'search': search,
-            'file_type': file_type,
-            'date_filter': date_filter,
-            'sort': sort,
-        }
+        "uploads/register.html"
     )
 
-# ⚡ Infinite Scroll API
-@login_required
-def gallery_data(request):
-    page = request.GET.get('page', 1)
-    images = UploadedImage.objects.filter(user=request.user).order_by('-uploaded_at')
 
-    paginator = Paginator(images, 6)
-    page_obj = paginator.get_page(page)
-
-    data = []
-    for img in page_obj:
-        data.append({
-            'url': img.image.url,
-            'id': img.id
-        })
-
-    return JsonResponse(data, safe=False)
-
-
-# 🗑️ Delete Image (only user's own image)
-@login_required
-def delete_image(request, image_id):
-    image = get_object_or_404(UploadedImage, id=image_id, user=request.user)
-
-    # delete file from media
-    if image.image:
-        image.image.delete(save=False)
-
-    image.delete()
-    return redirect('gallery')
+# =========================================================
+# DASHBOARD
+# =========================================================
 
 @login_required
 def dashboard(request):
@@ -282,75 +164,643 @@ def dashboard(request):
 
     total_storage = (
         user_images.aggregate(
-            total=Sum('compressed_size')
-        )['total'] or 0
+            total=Sum(
+                "compressed_size"
+            )
+        )["total"] or 0
     )
 
     month_start = timezone.now().replace(
+
         day=1,
+
         hour=0,
+
         minute=0,
+
         second=0,
+
         microsecond=0
+
     )
 
     monthly_uploads = user_images.filter(
+
         uploaded_at__gte=month_start
+
     ).count()
 
     recent_images = user_images.order_by(
-        '-uploaded_at'
-    )[:5]
+
+        "-uploaded_at"
+
+    )[:6]
 
     return render(
+
         request,
-        'uploads/dashboard.html',
+
+        "uploads/dashboard.html",
+
         {
-            'total_images': total_images,
-            'total_storage': total_storage,
-            'monthly_uploads': monthly_uploads,
-            'recent_images': recent_images,
+
+            "total_images":
+                total_images,
+
+            "total_storage":
+                total_storage,
+
+            "monthly_uploads":
+                monthly_uploads,
+
+            "recent_images":
+                recent_images,
+
         }
+
     )
 
-@staff_member_required
-def admin_dashboard(request):
 
-    total_users = User.objects.count()
+# =========================================================
+# UPLOAD IMAGE
+# =========================================================
 
-    total_images = UploadedImage.objects.count()
+@login_required
+def upload_image(request):
 
-    total_storage = (
-        UploadedImage.objects.aggregate(
-            total=Sum('compressed_size')
-        )['total'] or 0
-    )
+    if request.method == "POST":
 
-    today = timezone.now().date()
+        form = ImageUploadForm(
 
-    images_today = UploadedImage.objects.filter(
-        uploaded_at__date=today
-    ).count()
+            request.POST,
 
-    recent_users = User.objects.order_by(
-        '-date_joined'
-    )[:10]
+            request.FILES
 
-    recent_images = UploadedImage.objects.select_related(
-        'user'
-    ).order_by(
-        '-uploaded_at'
-    )[:10]
+        )
+
+        if form.is_valid():
+
+            uploaded_file = (
+                form.cleaned_data["image"]
+            )
+
+            original_size = (
+                uploaded_file.size
+            )
+
+            image = Image.open(
+                uploaded_file
+            )
+
+            original_format = (
+                image.format
+            )
+
+            width, height = (
+                image.size
+            )
+
+            # -------------------------------------------------
+            # COMPRESSION
+            # -------------------------------------------------
+
+            compressed_buffer = (
+                BytesIO()
+            )
+
+            # JPEG
+            if original_format in [
+                "JPEG",
+                "JPG"
+            ]:
+
+                if image.mode in [
+                    "RGBA",
+                    "P"
+                ]:
+
+                    image = image.convert(
+                        "RGB"
+                    )
+
+                image.save(
+
+                    compressed_buffer,
+
+                    format="JPEG",
+
+                    quality=85,
+
+                    optimize=True
+
+                )
+
+                extension = "jpg"
+
+                file_type = "JPEG"
+
+            # PNG
+            elif original_format == "PNG":
+
+                image.save(
+
+                    compressed_buffer,
+
+                    format="PNG",
+
+                    optimize=True
+
+                )
+
+                extension = "png"
+
+                file_type = "PNG"
+
+            # WEBP
+            elif original_format == "WEBP":
+
+                image.save(
+
+                    compressed_buffer,
+
+                    format="WEBP",
+
+                    quality=85
+
+                )
+
+                extension = "webp"
+
+                file_type = "WEBP"
+
+            else:
+
+                # Fallback
+                if image.mode in [
+                    "RGBA",
+                    "P"
+                ]:
+
+                    image = image.convert(
+                        "RGB"
+                    )
+
+                image.save(
+
+                    compressed_buffer,
+
+                    format="JPEG",
+
+                    quality=85,
+
+                    optimize=True
+
+                )
+
+                extension = "jpg"
+
+                file_type = "JPEG"
+
+            compressed_buffer.seek(0)
+
+            compressed_size = (
+                compressed_buffer.getbuffer().nbytes
+            )
+
+            # -------------------------------------------------
+            # CREATE DATABASE OBJECT
+            # -------------------------------------------------
+
+            uploaded_image = (
+                form.save(
+                    commit=False
+                )
+            )
+
+            uploaded_image.user = (
+                request.user
+            )
+
+            uploaded_image.original_filename = (
+                uploaded_file.name
+            )
+
+            uploaded_image.file_type = (
+                file_type
+            )
+
+            uploaded_image.original_size = (
+                original_size
+            )
+
+            uploaded_image.compressed_size = (
+                compressed_size
+            )
+
+            uploaded_image.width = (
+                width
+            )
+
+            uploaded_image.height = (
+                height
+            )
+
+            # -------------------------------------------------
+            # SAVE COMPRESSED IMAGE
+            # -------------------------------------------------
+
+            base_name = (
+                uploaded_file.name
+                .rsplit(
+                    ".",
+                    1
+                )[0]
+            )
+
+            compressed_name = (
+
+                f"{base_name}."
+
+                f"{extension}"
+
+            )
+
+            uploaded_image.image.save(
+
+                compressed_name,
+
+                ContentFile(
+
+                    compressed_buffer.read()
+
+                ),
+
+                save=False
+
+            )
+
+            uploaded_image.save()
+
+            # -------------------------------------------------
+            # CREATE THUMBNAIL
+            # -------------------------------------------------
+
+            thumbnail_image = Image.open(
+
+                uploaded_image.image
+
+            )
+
+            thumbnail_image.thumbnail(
+
+                (
+                    400,
+                    400
+                )
+
+            )
+
+            thumbnail_buffer = (
+                BytesIO()
+            )
+
+            if file_type == "PNG":
+
+                thumbnail_image.save(
+
+                    thumbnail_buffer,
+
+                    format="PNG",
+
+                    optimize=True
+
+                )
+
+                thumbnail_extension = "png"
+
+            elif file_type == "WEBP":
+
+                thumbnail_image.save(
+
+                    thumbnail_buffer,
+
+                    format="WEBP",
+
+                    quality=80
+
+                )
+
+                thumbnail_extension = "webp"
+
+            else:
+
+                if thumbnail_image.mode in [
+                    "RGBA",
+                    "P"
+                ]:
+
+                    thumbnail_image = (
+                        thumbnail_image.convert(
+                            "RGB"
+                        )
+                    )
+
+                thumbnail_image.save(
+
+                    thumbnail_buffer,
+
+                    format="JPEG",
+
+                    quality=80,
+
+                    optimize=True
+
+                )
+
+                thumbnail_extension = "jpg"
+
+            thumbnail_buffer.seek(0)
+
+            thumbnail_name = (
+
+                f"{base_name}_thumb."
+
+                f"{thumbnail_extension}"
+
+            )
+
+            uploaded_image.thumbnail.save(
+
+                thumbnail_name,
+
+                ContentFile(
+
+                    thumbnail_buffer.read()
+
+                ),
+
+                save=True
+
+            )
+
+            return redirect(
+                "success"
+            )
+
+    else:
+
+        form = ImageUploadForm()
 
     return render(
+
         request,
-        'uploads/admin_dashboard.html',
+
+        "uploads/upload.html",
+
         {
-            'total_users': total_users,
-            'total_images': total_images,
-            'total_storage': total_storage,
-            'images_today': images_today,
-            'recent_users': recent_users,
-            'recent_images': recent_images,
+            "form": form
         }
+
+    )
+
+
+# =========================================================
+# SUCCESS
+# =========================================================
+
+@login_required
+def success(request):
+
+    return render(
+
+        request,
+
+        "uploads/success.html"
+
+    )
+
+
+# =========================================================
+# GALLERY
+# =========================================================
+
+@login_required
+def gallery(request):
+
+    images = UploadedImage.objects.filter(
+
+        user=request.user
+
+    )
+
+    search = request.GET.get(
+
+        "search",
+
+        ""
+
+    ).strip()
+
+    file_type = request.GET.get(
+
+        "file_type",
+
+        ""
+
+    )
+
+    date_filter = request.GET.get(
+
+        "date",
+
+        ""
+
+    )
+
+    sort = request.GET.get(
+
+        "sort",
+
+        "newest"
+
+    )
+
+    # -------------------------------------------------
+    # SEARCH
+    # -------------------------------------------------
+
+    if search:
+
+        images = images.filter(
+
+            Q(
+                original_filename__icontains=
+                search
+            )
+
+        )
+
+    # -------------------------------------------------
+    # FILE TYPE
+    # -------------------------------------------------
+
+    if file_type:
+
+        images = images.filter(
+
+            file_type__iexact=
+            file_type
+
+        )
+
+    # -------------------------------------------------
+    # DATE
+    # -------------------------------------------------
+
+    if date_filter:
+
+        now = timezone.now()
+
+        if date_filter == "today":
+
+            start_date = (
+                now -
+                timedelta(
+                    days=1
+                )
+            )
+
+        elif date_filter == "week":
+
+            start_date = (
+                now -
+                timedelta(
+                    days=7
+                )
+            )
+
+        elif date_filter == "month":
+
+            start_date = (
+                now -
+                timedelta(
+                    days=30
+                )
+            )
+
+        else:
+
+            start_date = None
+
+        if start_date:
+
+            images = images.filter(
+
+                uploaded_at__gte=
+                start_date
+
+            )
+
+    # -------------------------------------------------
+    # SORTING
+    # -------------------------------------------------
+
+    if sort == "oldest":
+
+        images = images.order_by(
+
+            "uploaded_at"
+
+        )
+
+    elif sort == "name":
+
+        images = images.order_by(
+
+            "original_filename"
+
+        )
+
+    elif sort == "size":
+
+        images = images.order_by(
+
+            "-compressed_size"
+
+        )
+
+    else:
+
+        images = images.order_by(
+
+            "-uploaded_at"
+
+        )
+
+    return render(
+
+        request,
+
+        "uploads/gallery.html",
+
+        {
+
+            "images":
+                images,
+
+            "search":
+                search,
+
+            "file_type":
+                file_type,
+
+            "date_filter":
+                date_filter,
+
+            "sort":
+                sort,
+
+        }
+
+    )
+
+
+# =========================================================
+# DELETE IMAGE
+# =========================================================
+
+@login_required
+def delete_image(
+    request,
+    image_id
+):
+
+    image = get_object_or_404(
+
+        UploadedImage,
+
+        id=image_id,
+
+        user=request.user
+
+    )
+
+    if request.method == "POST":
+
+        if image.image:
+
+            image.image.delete(
+                save=False
+            )
+
+        if image.thumbnail:
+
+            image.thumbnail.delete(
+                save=False
+            )
+
+        image.delete()
+
+    return redirect(
+        "gallery"
     )

@@ -1,133 +1,200 @@
-{% extends 'uploads/base.html' %}
+{% extends "uploads/base.html" %}
+
+
+{% block title %}
+
+Dashboard
+
+{% endblock %}
+
 
 {% block content %}
 
-<h2>
-    Welcome, {{ user.username }}
-</h2>
 
-<div class="dashboard-grid">
+<div class="page-header">
 
-    <div class="stat-card">
-        <h3>Total Images</h3>
-        <p>{{ total_images }}</p>
-    </div>
+    <h1>
 
-    <div class="stat-card">
-        <h3>Storage Used</h3>
-        <p>
-            {{ total_storage|filesizeformat }}
-        </p>
-    </div>
+        Welcome,
+        {{ user.username }}
 
-    <div class="stat-card">
-        <h3>This Month</h3>
-        <p>{{ monthly_uploads }}</p>
-    </div>
-
-</div>
-
-
-<h3>
-    Recent Uploads
-</h3>
-
-<div class="recent-grid">
-
-{% for image in recent_images %}
-
-<div class="recent-card">
-
-    {% if image.thumbnail %}
-        <img src="{{ image.thumbnail.url }}">
-    {% else %}
-        <img src="{{ image.image.url }}">
-    {% endif %}
+    </h1>
 
     <p>
-        {{ image.original_filename }}
+
+        Manage your uploaded images
+
     </p>
 
 </div>
 
-{% empty %}
 
-<p>
-    You have not uploaded any images yet.
-</p>
+<div class="stats-grid">
 
-{% endfor %}
+
+    <div class="stat-card">
+
+        <h3>
+
+            Total Images
+
+        </h3>
+
+        <div class="stat-number">
+
+            {{ total_images }}
+
+        </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <h3>
+
+            Storage Used
+
+        </h3>
+
+        <div class="stat-number">
+
+            {{ total_storage|filesizeformat }}
+
+        </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <h3>
+
+            This Month
+
+        </h3>
+
+        <div class="stat-number">
+
+            {{ monthly_uploads }}
+
+        </div>
+
+    </div>
+
 
 </div>
 
 
-<div class="dashboard-actions">
+<div class="section-header">
 
-    <a href="{% url 'upload' %}">
-        Upload Image
-    </a>
+    <h2>
 
-    <a href="{% url 'gallery' %}">
-        View Gallery
+        Recent Uploads
+
+    </h2>
+
+
+    <a
+        href="{% url 'gallery' %}"
+        class="button"
+    >
+
+        View All
+
     </a>
 
 </div>
 
 
-<style>
+<div class="image-grid">
 
-.dashboard-grid {
-    display: grid;
-    grid-template-columns:
-        repeat(auto-fit, minmax(200px, 1fr));
 
-    gap: 20px;
-}
+    {% for image in recent_images %}
 
-.stat-card {
-    padding: 25px;
-    text-align: center;
-    border-radius: 20px;
-    background: rgba(255,255,255,0.1);
-}
 
-.stat-card p {
-    font-size: 30px;
-    font-weight: bold;
-}
+    <div class="image-card">
 
-.recent-grid {
-    display: grid;
-    grid-template-columns:
-        repeat(auto-fit, minmax(180px, 1fr));
 
-    gap: 20px;
-}
+        {% if image.thumbnail %}
 
-.recent-card {
-    padding: 10px;
-    border-radius: 15px;
-    background: rgba(255,255,255,0.1);
-}
+            <img
+                src="{{ image.thumbnail.url }}"
+                alt="{{ image.original_filename }}"
+            >
 
-.recent-card img {
-    width: 100%;
-    border-radius: 10px;
-}
+        {% else %}
 
-.dashboard-actions {
-    margin-top: 30px;
-}
+            <img
+                src="{{ image.image.url }}"
+                alt="{{ image.original_filename }}"
+            >
 
-.dashboard-actions a {
-    margin-right: 15px;
-    padding: 12px 20px;
-    background: rgba(255,255,255,0.2);
-    color: white;
-    text-decoration: none;
-    border-radius: 10px;
-}
+        {% endif %}
 
-</style>
+
+        <div class="image-info">
+
+            <h3>
+
+                {{ image.original_filename }}
+
+            </h3>
+
+
+            <p>
+
+                {{ image.compressed_size|filesizeformat }}
+
+            </p>
+
+
+            <p>
+
+                {{ image.uploaded_at|date:"d M Y" }}
+
+            </p>
+
+        </div>
+
+
+    </div>
+
+
+    {% empty %}
+
+
+    <div class="empty-state">
+
+        <h3>
+
+            No images uploaded yet
+
+        </h3>
+
+        <p>
+
+            Upload your first image to get started.
+
+        </p>
+
+
+        <a
+            href="{% url 'upload' %}"
+            class="button"
+        >
+
+            Upload Image
+
+        </a>
+
+    </div>
+
+
+    {% endfor %}
+
+
+</div>
+
 
 {% endblock %}

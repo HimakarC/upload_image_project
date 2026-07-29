@@ -1,239 +1,427 @@
-{% extends 'uploads/base.html' %}
+{% extends "uploads/base.html" %}
+
+
+{% block title %}
+
+My Gallery
+
+{% endblock %}
+
 
 {% block content %}
 
-<h2 style="text-align:center;">
-    Your Gallery
-</h2>
+
+<div class="page-header">
+
+    <h1>
+
+        My Gallery
+
+    </h1>
+
+    <p>
+
+        Search and manage your images
+
+    </p>
+
+</div>
+
 
 <div class="filter-container">
 
+
     <form method="GET">
 
-        <input
-            type="text"
-            name="search"
-            placeholder="Search by filename..."
-            value="{{ search }}"
-        >
 
-        <select name="file_type">
-            <option value="">All Types</option>
+        <div class="search-box">
 
-            <option value="JPEG"
-                {% if file_type == "JPEG" %}
-                selected
-                {% endif %}
+
+            <input
+
+                type="text"
+
+                name="search"
+
+                placeholder="Search by filename..."
+
+                value="{{ search }}"
+
             >
-                JPEG
-            </option>
 
-            <option value="PNG"
-                {% if file_type == "PNG" %}
-                selected
-                {% endif %}
+
+            <button
+                type="submit"
+                class="button"
             >
-                PNG
-            </option>
 
-            <option value="WEBP"
-                {% if file_type == "WEBP" %}
-                selected
-                {% endif %}
+                Search
+
+            </button>
+
+
+        </div>
+
+
+        <div class="filter-row">
+
+
+            <select name="file_type">
+
+
+                <option value="">
+
+                    All Types
+
+                </option>
+
+
+                <option
+                    value="JPEG"
+
+                    {% if file_type == "JPEG" %}
+
+                    selected
+
+                    {% endif %}
+
+                >
+
+                    JPEG
+
+                </option>
+
+
+                <option
+                    value="PNG"
+
+                    {% if file_type == "PNG" %}
+
+                    selected
+
+                    {% endif %}
+
+                >
+
+                    PNG
+
+                </option>
+
+
+                <option
+                    value="WEBP"
+
+                    {% if file_type == "WEBP" %}
+
+                    selected
+
+                    {% endif %}
+
+                >
+
+                    WEBP
+
+                </option>
+
+
+            </select>
+
+
+            <select name="date">
+
+
+                <option value="">
+
+                    All Dates
+
+                </option>
+
+
+                <option
+                    value="today"
+
+                    {% if date_filter == "today" %}
+
+                    selected
+
+                    {% endif %}
+
+                >
+
+                    Last 24 Hours
+
+                </option>
+
+
+                <option
+                    value="week"
+
+                    {% if date_filter == "week" %}
+
+                    selected
+
+                    {% endif %}
+
+                >
+
+                    Last 7 Days
+
+                </option>
+
+
+                <option
+                    value="month"
+
+                    {% if date_filter == "month" %}
+
+                    selected
+
+                    {% endif %}
+
+                >
+
+                    Last 30 Days
+
+                </option>
+
+
+            </select>
+
+
+            <select name="sort">
+
+
+                <option
+                    value="newest"
+
+                    {% if sort == "newest" %}
+
+                    selected
+
+                    {% endif %}
+
+                >
+
+                    Newest
+
+                </option>
+
+
+                <option
+                    value="oldest"
+
+                    {% if sort == "oldest" %}
+
+                    selected
+
+                    {% endif %}
+
+                >
+
+                    Oldest
+
+                </option>
+
+
+                <option
+                    value="name"
+
+                    {% if sort == "name" %}
+
+                    selected
+
+                    {% endif %}
+
+                >
+
+                    Name
+
+                </option>
+
+
+                <option
+                    value="size"
+
+                    {% if sort == "size" %}
+
+                    selected
+
+                    {% endif %}
+
+                >
+
+                    Largest
+
+                </option>
+
+
+            </select>
+
+
+            <a
+                href="{% url 'gallery' %}"
+                class="clear-button"
             >
-                WEBP
-            </option>
-        </select>
 
-        <select name="date">
+                Clear
 
-            <option value="">
-                All Dates
-            </option>
+            </a>
 
-            <option value="today"
-                {% if date_filter == "today" %}
-                selected
-                {% endif %}
-            >
-                Last 24 Hours
-            </option>
 
-            <option value="week"
-                {% if date_filter == "week" %}
-                selected
-                {% endif %}
-            >
-                Last 7 Days
-            </option>
+        </div>
 
-            <option value="month"
-                {% if date_filter == "month" %}
-                selected
-                {% endif %}
-            >
-                Last 30 Days
-            </option>
-
-        </select>
-
-        <select name="sort">
-
-            <option value="newest">
-                Newest
-            </option>
-
-            <option value="oldest"
-                {% if sort == "oldest" %}
-                selected
-                {% endif %}
-            >
-                Oldest
-            </option>
-
-            <option value="name"
-                {% if sort == "name" %}
-                selected
-                {% endif %}
-            >
-                Name
-            </option>
-
-            <option value="size"
-                {% if sort == "size" %}
-                selected
-                {% endif %}
-            >
-                Largest
-            </option>
-
-        </select>
-
-        <button type="submit">
-            Search / Filter
-        </button>
-
-        <a href="{% url 'gallery' %}">
-            Clear
-        </a>
 
     </form>
 
+
 </div>
 
 
-<div class="grid">
+<div class="image-grid">
 
-{% for img in images %}
 
-<div class="card">
+    {% for image in images %}
 
-    {% if img.thumbnail %}
-        <img src="{{ img.thumbnail.url }}">
-    {% else %}
-        <img src="{{ img.image.url }}">
-    {% endif %}
 
-    <h4>
-        {{ img.original_filename }}
-    </h4>
+    <div class="image-card">
 
-    <p>
-        Type: {{ img.file_type }}
-    </p>
 
-    <p>
-        Size:
-        {{ img.compressed_size|filesizeformat }}
-    </p>
+        {% if image.thumbnail %}
 
-    <p>
-        Dimensions:
-        {{ img.width }} × {{ img.height }}
-    </p>
+            <img
+                src="{{ image.thumbnail.url }}"
+                alt="{{ image.original_filename }}"
+            >
 
-    <div class="actions">
+        {% else %}
 
-        <a
-            href="{{ img.image.url }}"
-            download
-        >
-            ⬇️ Download
-        </a>
+            <img
+                src="{{ image.image.url }}"
+                alt="{{ image.original_filename }}"
+            >
 
-        <a
-            href="{% url 'delete_image' img.id %}"
-            onclick="return confirm('Delete this image?')"
-        >
-            🗑️ Delete
-        </a>
+        {% endif %}
+
+
+        <div class="image-info">
+
+
+            <h3>
+
+                {{ image.original_filename }}
+
+            </h3>
+
+
+            <p>
+
+                Type:
+                {{ image.file_type }}
+
+            </p>
+
+
+            <p>
+
+                Size:
+                {{ image.compressed_size|filesizeformat }}
+
+            </p>
+
+
+            <p>
+
+                Dimensions:
+                {{ image.width }}
+                ×
+                {{ image.height }}
+
+            </p>
+
+
+            {% if image.original_size > image.compressed_size %}
+
+            <p class="compression-info">
+
+                Saved
+                {{ image.compression_percentage }}%
+
+            </p>
+
+            {% endif %}
+
+
+            <div class="card-actions">
+
+
+                <a
+                    href="{{ image.image.url }}"
+                    download
+                    class="download-button"
+                >
+
+                    Download
+
+                </a>
+
+
+                <form
+                    method="post"
+                    action="{% url 'delete_image' image.id %}"
+                    onsubmit="
+                    return confirm(
+                    'Are you sure you want to delete this image?'
+                    );
+                    "
+                >
+
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        class="delete-button"
+                    >
+
+                        Delete
+
+                    </button>
+
+                </form>
+
+
+            </div>
+
+
+        </div>
+
 
     </div>
 
+
+    {% empty %}
+
+
+    <div class="empty-state">
+
+        <h3>
+
+            No images found
+
+        </h3>
+
+        <p>
+
+            Try changing your search or filters.
+
+        </p>
+
+    </div>
+
+
+    {% endfor %}
+
+
 </div>
 
-{% empty %}
-
-<p style="text-align:center;">
-    No images found.
-</p>
-
-{% endfor %}
-
-</div>
-
-<style>
-
-.filter-container {
-    max-width: 1000px;
-    margin: 20px auto;
-    padding: 20px;
-    text-align: center;
-}
-
-.filter-container input,
-.filter-container select,
-.filter-container button {
-    padding: 10px;
-    margin: 5px;
-    border-radius: 8px;
-    border: none;
-}
-
-.filter-container button {
-    cursor: pointer;
-}
-
-.grid {
-    display: grid;
-    grid-template-columns:
-        repeat(auto-fill, minmax(220px, 1fr));
-
-    gap: 20px;
-    padding: 20px;
-}
-
-.card {
-    padding: 15px;
-    border-radius: 20px;
-    background: rgba(255,255,255,0.1);
-    backdrop-filter: blur(12px);
-}
-
-.card img {
-    width: 100%;
-    border-radius: 10px;
-}
-
-.actions {
-    display: flex;
-    justify-content: space-between;
-}
-
-.actions a {
-    color: white;
-}
-
-</style>
 
 {% endblock %}

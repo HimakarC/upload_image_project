@@ -16,6 +16,7 @@ urlpatterns = [
     path("test/", lambda request: HttpResponse("Django Working")),
     # Upload App URLs
     path('', include('uploads.urls')),
+    
 
     # Login
     path(
@@ -41,3 +42,14 @@ urlpatterns += static(
     settings.MEDIA_URL,
     document_root=settings.MEDIA_ROOT
 )
+
+if settings.DEBUG:
+
+    urlpatterns += static(
+
+        settings.MEDIA_URL,
+
+        document_root=
+        settings.MEDIA_ROOT
+
+    )
