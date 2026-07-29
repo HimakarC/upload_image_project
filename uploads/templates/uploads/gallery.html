@@ -1,38 +1,223 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Gallery</title>
+{% extends 'uploads/base.html' %}
+
+{% block content %}
+
+<h2 style="text-align:center;">
+    Your Gallery
+</h2>
+
+<div class="filter-container">
+
+    <form method="GET">
+
+        <input
+            type="text"
+            name="search"
+            placeholder="Search by filename..."
+            value="{{ search }}"
+        >
+
+        <select name="file_type">
+            <option value="">All Types</option>
+
+            <option value="JPEG"
+                {% if file_type == "JPEG" %}
+                selected
+                {% endif %}
+            >
+                JPEG
+            </option>
+
+            <option value="PNG"
+                {% if file_type == "PNG" %}
+                selected
+                {% endif %}
+            >
+                PNG
+            </option>
+
+            <option value="WEBP"
+                {% if file_type == "WEBP" %}
+                selected
+                {% endif %}
+            >
+                WEBP
+            </option>
+        </select>
+
+        <select name="date">
+
+            <option value="">
+                All Dates
+            </option>
+
+            <option value="today"
+                {% if date_filter == "today" %}
+                selected
+                {% endif %}
+            >
+                Last 24 Hours
+            </option>
+
+            <option value="week"
+                {% if date_filter == "week" %}
+                selected
+                {% endif %}
+            >
+                Last 7 Days
+            </option>
+
+            <option value="month"
+                {% if date_filter == "month" %}
+                selected
+                {% endif %}
+            >
+                Last 30 Days
+            </option>
+
+        </select>
+
+        <select name="sort">
+
+            <option value="newest">
+                Newest
+            </option>
+
+            <option value="oldest"
+                {% if sort == "oldest" %}
+                selected
+                {% endif %}
+            >
+                Oldest
+            </option>
+
+            <option value="name"
+                {% if sort == "name" %}
+                selected
+                {% endif %}
+            >
+                Name
+            </option>
+
+            <option value="size"
+                {% if sort == "size" %}
+                selected
+                {% endif %}
+            >
+                Largest
+            </option>
+
+        </select>
+
+        <button type="submit">
+            Search / Filter
+        </button>
+
+        <a href="{% url 'gallery' %}">
+            Clear
+        </a>
+
+    </form>
+
+</div>
+
+
+<div class="grid">
+
+{% for img in images %}
+
+<div class="card">
+
+    {% if img.thumbnail %}
+        <img src="{{ img.thumbnail.url }}">
+    {% else %}
+        <img src="{{ img.image.url }}">
+    {% endif %}
+
+    <h4>
+        {{ img.original_filename }}
+    </h4>
+
+    <p>
+        Type: {{ img.file_type }}
+    </p>
+
+    <p>
+        Size:
+        {{ img.compressed_size|filesizeformat }}
+    </p>
+
+    <p>
+        Dimensions:
+        {{ img.width }} × {{ img.height }}
+    </p>
+
+    <div class="actions">
+
+        <a
+            href="{{ img.image.url }}"
+            download
+        >
+            ⬇️ Download
+        </a>
+
+        <a
+            href="{% url 'delete_image' img.id %}"
+            onclick="return confirm('Delete this image?')"
+        >
+            🗑️ Delete
+        </a>
+
+    </div>
+
+</div>
+
+{% empty %}
+
+<p style="text-align:center;">
+    No images found.
+</p>
+
+{% endfor %}
+
+</div>
 
 <style>
-body {
-    margin: 0;
-    font-family: Arial;
-    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-    color: white;
+
+.filter-container {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 20px;
+    text-align: center;
 }
 
-h2 {
-    text-align: center;
-    padding: 20px;
+.filter-container input,
+.filter-container select,
+.filter-container button {
+    padding: 10px;
+    margin: 5px;
+    border-radius: 8px;
+    border: none;
+}
+
+.filter-container button {
+    cursor: pointer;
 }
 
 .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns:
+        repeat(auto-fill, minmax(220px, 1fr));
+
     gap: 20px;
     padding: 20px;
 }
 
 .card {
-    backdrop-filter: blur(12px);
-    background: rgba(255,255,255,0.1);
+    padding: 15px;
     border-radius: 20px;
-    padding: 10px;
-    transition: 0.3s;
-}
-
-.card:hover {
-    transform: scale(1.05);
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(12px);
 }
 
 .card img {
@@ -43,103 +228,12 @@ h2 {
 .actions {
     display: flex;
     justify-content: space-between;
-    margin-top: 10px;
 }
 
-.icon {
-    text-decoration: none;
-    font-size: 22px;
-    cursor: pointer;
+.actions a {
+    color: white;
 }
+
 </style>
 
-</head>
-<body>
-{% extends 'uploads/base.html' %}
-
-{% block content %}
-
-<h2 style="text-align:center;">Your Gallery</h2>
-
-<div class="grid">
-    {% for img in images %}
-    <div class="card">
-        <img src="{{ img.image.url }}">
-        <div>
-            <a href="{{ img.image.url }}" download>⬇️</a>
-            <a href="{% url 'delete_image' img.id %}">🗑️</a>
-        </div>
-    </div>
-    {% endfor %}
-</div>
-
 {% endblock %}
-<h2>Your Gallery</h2>
-<div style="text-align:center; margin-bottom: 20px;">
-    <a href="{% url 'upload' %}">
-        <button style="
-            padding: 10px 20px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 16px;
-            background: rgba(255,255,255,0.2);
-            color: white;
-            backdrop-filter: blur(10px);
-        ">
-            ⬆️ Upload New Image
-        </button>
-    </a>
-</div>
-
-<div class="grid" id="gallery">
-
-{% for img in images %}
-<div class="card">
-    <img src="{{ img.image.url }}">
-
-    <div class="actions">
-        <a href="{{ img.image.url }}" download class="icon">⬇️</a>
-        <a href="{% url 'delete_image' img.id %}" class="icon"
-           onclick="return confirm('Delete this image?')">🗑️</a>
-    </div>
-</div>
-{% endfor %}
-
-</div>
-
-<script>
-let page = 2;
-let loading = false;
-
-window.onscroll = async () => {
-    if (loading) return;
-
-    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
-        loading = true;
-
-        let res = await fetch(`/gallery-data/?page=${page}`);
-        let data = await res.json();
-
-        let container = document.getElementById("gallery");
-
-        data.forEach(img => {
-            container.innerHTML += `
-            <div class="card">
-                <img src="${img.url}">
-                <div class="actions">
-                    <a href="${img.url}" download class="icon">⬇️</a>
-                    <a href="/delete/${img.id}/" class="icon"
-                       onclick="return confirm('Delete this image?')">🗑️</a>
-                </div>
-            </div>`;
-        });
-
-        page++;
-        loading = false;
-    }
-};
-</script>
-
-</body>
-</html>

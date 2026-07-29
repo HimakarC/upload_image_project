@@ -5,7 +5,9 @@ from .views import (
     gallery,
     delete_image,
     gallery_data,
-    register
+    register,
+    dashboard,
+    admin_dashboard,
 )
 
 urlpatterns = [
@@ -15,4 +17,15 @@ urlpatterns = [
     path('gallery-data/', gallery_data, name='gallery_data'),
     path('delete/<int:image_id>/', delete_image, name='delete_image'),
     path('register/', register, name='register'),
+    path(
+        'dashboard/',
+        dashboard,
+        name='dashboard'
+    ),
+
+    path(
+        'admin-dashboard/',
+        admin_dashboard,
+        name='admin_dashboard'
+    ),
 ]
