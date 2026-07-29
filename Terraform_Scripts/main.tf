@@ -55,7 +55,7 @@ resource "aws_s3_bucket_policy" "public_read_policy" {
   })
 }
 
-resource "aws_codestarconnections_connection" "github" {
+resource "aws_codeconnections_connection" "github" {
   name          = "github-connection"
   provider_type = "GitHub"
 }
