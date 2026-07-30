@@ -5,14 +5,12 @@ phases:
     runtime-versions:
       python: 3.11
     commands:
+      - mkdir -p package
       - pip install --upgrade pip
-      - pip install -r requirements.txt
+      - pip install -r requirements.txt -t package/
 
   build:
     commands:
-      - python manage.py collectstatic --noinput
-      - mkdir -p package
-      - pip install -r requirements.txt -t package/
       - cp -r upload_image_project package/
       - cp -r uploads package/
       - cp manage.py package/
