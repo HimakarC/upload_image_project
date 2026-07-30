@@ -124,7 +124,7 @@ CREATE INDEX django_session_expire_date_a5c62663
 ON django_session(expire_date);
 
 
-CREATE TABLE images (
+CREATE TABLE uploads_uploadedimage (
     id BIGSERIAL PRIMARY KEY,
 
     user_id BIGINT NOT NULL,
