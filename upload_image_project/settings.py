@@ -95,15 +95,40 @@ STORAGES = {
 AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
 
 if not AWS_STORAGE_BUCKET_NAME:
-    raise ImproperlyConfigured("AWS_STORAGE_BUCKET_NAME environment variable is required!")
-AWS_S3_REGION_NAME = os.environ.get("AWS_S3_REGION_NAME", "us-east-1")
+    raise ImproperlyConfigured(
+        "AWS_STORAGE_BUCKET_NAME environment variable is required!"
+    )
+
+AWS_S3_REGION_NAME = os.environ.get(
+    "AWS_S3_REGION_NAME",
+    "us-east-1"
+)
+
+AWS_S3_SIGNATURE_VERSION = "s3v4"
+
 AWS_QUERYSTRING_AUTH = False
 
-# Optional (clean URLs)
-MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/"
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+    },
+    "staticfiles": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "location": "static",
+        },
+    },
+}
 
-USE_X_FORWARDED_HOST = True
+MEDIA_URL = (
+    f"https://{AWS_STORAGE_BUCKET_NAME}.s3."
+    f"{AWS_S3_REGION_NAME}.amazonaws.com/"
+)
 
+STATIC_URL = (
+    f"https://{AWS_STORAGE_BUCKET_NAME}.s3."
+    f"{AWS_S3_REGION_NAME}.amazonaws.com/static/"
+)
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -163,8 +188,6 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
-
-STATIC_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/static/' #If there is a error here change it to '/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
