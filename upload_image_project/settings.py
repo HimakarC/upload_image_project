@@ -87,6 +87,9 @@ STORAGES = {
     },
     "staticfiles": {
         "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "location": "static",
+        },
     },
 }
 
@@ -162,11 +165,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/' #If there is a error here change it to '/static/'
+STATIC_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/static/' #If there is a error here change it to '/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+STATICFILES_DIRS = [
+    BASE_DIR / "uploads" / "templates" / "uploads",
+]
 
-STATIC_ROOT = BASE_DIR / "staticfiles"
+# STATIC_ROOT = BASE_DIR / "staticfiles"
