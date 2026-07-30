@@ -5,29 +5,58 @@ CREATE TABLE django_migrations (
     applied TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
+
 CREATE TABLE django_content_type (
     id BIGSERIAL PRIMARY KEY,
     app_label VARCHAR(100) NOT NULL,
-    model VARCHAR(100) NOT NULL
+    model VARCHAR(100) NOT NULL,
+
+    CONSTRAINT django_content_type_app_model_unique
+        UNIQUE (app_label, model)
 );
+
 
 CREATE TABLE auth_permission (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    content_type_id BIGINT,
-    codename VARCHAR(100) NOT NULL
+    content_type_id BIGINT NOT NULL,
+    codename VARCHAR(100) NOT NULL,
+
+    CONSTRAINT auth_permission_content_type_fk
+        FOREIGN KEY (content_type_id)
+        REFERENCES django_content_type(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT auth_permission_content_type_codename_unique
+        UNIQUE (content_type_id, codename)
 );
+
 
 CREATE TABLE auth_group (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(150) NOT NULL UNIQUE
 );
 
+
 CREATE TABLE auth_group_permissions (
     id BIGSERIAL PRIMARY KEY,
     group_id BIGINT NOT NULL,
-    permission_id BIGINT NOT NULL
+    permission_id BIGINT NOT NULL,
+
+    CONSTRAINT auth_group_permissions_group_fk
+        FOREIGN KEY (group_id)
+        REFERENCES auth_group(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT auth_group_permissions_permission_fk
+        FOREIGN KEY (permission_id)
+        REFERENCES auth_permission(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT auth_group_permissions_unique
+        UNIQUE (group_id, permission_id)
 );
+
 
 CREATE TABLE auth_user (
     id BIGSERIAL PRIMARY KEY,
@@ -43,17 +72,46 @@ CREATE TABLE auth_user (
     date_joined TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
+
 CREATE TABLE auth_user_groups (
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL,
-    group_id BIGINT NOT NULL
+    group_id BIGINT NOT NULL,
+
+    CONSTRAINT auth_user_groups_user_fk
+        FOREIGN KEY (user_id)
+        REFERENCES auth_user(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT auth_user_groups_group_fk
+        FOREIGN KEY (group_id)
+        REFERENCES auth_group(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT auth_user_groups_unique
+        UNIQUE (user_id, group_id)
 );
+
 
 CREATE TABLE auth_user_user_permissions (
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL,
-    permission_id BIGINT NOT NULL
+    permission_id BIGINT NOT NULL,
+
+    CONSTRAINT auth_user_user_permissions_user_fk
+        FOREIGN KEY (user_id)
+        REFERENCES auth_user(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT auth_user_user_permissions_permission_fk
+        FOREIGN KEY (permission_id)
+        REFERENCES auth_permission(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT auth_user_user_permissions_unique
+        UNIQUE (user_id, permission_id)
 );
+
 
 CREATE TABLE django_session (
     session_key VARCHAR(40) PRIMARY KEY,
@@ -61,17 +119,44 @@ CREATE TABLE django_session (
     expire_date TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
+
 CREATE INDEX django_session_expire_date_a5c62663
 ON django_session(expire_date);
 
-CREATE TABLE images (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL,
-    image VARCHAR(255) NOT NULL,
-    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT fk_user
-        FOREIGN KEY(user_id)
+CREATE TABLE images (
+    id BIGSERIAL PRIMARY KEY,
+
+    user_id BIGINT NOT NULL,
+
+    image VARCHAR(255) NOT NULL,
+
+    thumbnail VARCHAR(255) NULL,
+
+    original_filename VARCHAR(255) NOT NULL DEFAULT '',
+
+    file_type VARCHAR(50) NOT NULL DEFAULT '',
+
+    original_size INTEGER NOT NULL DEFAULT 0,
+
+    compressed_size INTEGER NOT NULL DEFAULT 0,
+
+    width INTEGER NOT NULL DEFAULT 0,
+
+    height INTEGER NOT NULL DEFAULT 0,
+
+    uploaded_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT images_user_fk
+        FOREIGN KEY (user_id)
         REFERENCES auth_user(id)
         ON DELETE CASCADE
 );
+
+
+CREATE INDEX images_user_id_index
+ON images(user_id);
+
+
+CREATE INDEX images_uploaded_at_index
+ON images(uploaded_at);

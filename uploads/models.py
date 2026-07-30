@@ -51,6 +51,7 @@ class UploadedImage(models.Model):
     )
 
     class Meta:
+        db_table = "images"
         ordering = ["-uploaded_at"]
 
     def __str__(self):
