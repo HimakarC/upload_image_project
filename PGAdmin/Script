@@ -160,3 +160,23 @@ ON uploads_uploadedimage(user_id);
 
 CREATE INDEX images_uploaded_at_index
 ON uploads_uploadedimage(uploaded_at);
+
+-- Django Admin Log
+CREATE TABLE IF NOT EXISTS django_admin_log (
+    id SERIAL PRIMARY KEY,
+    action_time TIMESTAMP WITH TIME ZONE NOT NULL,
+    object_id TEXT,
+    object_repr VARCHAR(200) NOT NULL,
+    action_flag SMALLINT NOT NULL CHECK (action_flag >= 0),
+    change_message TEXT NOT NULL,
+    content_type_id INTEGER,
+    user_id INTEGER NOT NULL,
+
+    CONSTRAINT django_admin_log_content_type_id_fk
+        FOREIGN KEY (content_type_id)
+        REFERENCES django_content_type(id)
+        DEFERRABLE INITIALLY DEFERRED
+);
+
+CREATE INDEX IF NOT EXISTS django_session_expire_date_idx
+ON django_session (expire_date);
