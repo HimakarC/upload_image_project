@@ -127,7 +127,7 @@ MEDIA_URL = (
 
 STATIC_URL = (
     f"https://{AWS_STORAGE_BUCKET_NAME}.s3."
-    f"{AWS_S3_REGION_NAME}.amazonaws.com/static/"
+    f"{AWS_S3_REGION_NAME}.amazonaws.com/"
 )
 
 # Database
