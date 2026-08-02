@@ -9,6 +9,7 @@ from .views import (
     success,
     gallery,
     delete_image,
+    admin_dashboard,
 )
 
 
@@ -61,5 +62,9 @@ urlpatterns = [
         delete_image,
         name="delete_image"
     ),
-
+    path(
+        "admin-dashboard/",
+        admin_dashboard,
+        name="admin_dashboard"
+    ),
 ]

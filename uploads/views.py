@@ -2,7 +2,10 @@ from io import BytesIO
 from datetime import timedelta
 
 from PIL import Image
-
+from django.contrib.admin.views.decorators import staff_member_required
+from django.utils import timezone
+from django.shortcuts import render
+from .models import UploadedImage
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -803,4 +806,55 @@ def delete_image(
 
     return redirect(
         "gallery"
+    )
+
+
+
+
+
+# Personal
+
+@staff_member_required(login_url="/login/")
+def admin_dashboard(request):
+
+    total_users = User.objects.count()
+
+    total_images = UploadedImage.objects.count()
+
+    total_storage = (
+        UploadedImage.objects.aggregate(
+            total=Sum("compressed_size")
+        )["total"]
+        or 0
+    )
+
+    today = timezone.localdate()
+
+    images_today = UploadedImage.objects.filter(
+        uploaded_at__date=today
+    ).count()
+
+    recent_users = User.objects.order_by(
+        "-date_joined"
+    )[:10]
+
+    recent_images = UploadedImage.objects.select_related(
+        "user"
+    ).order_by(
+        "-uploaded_at"
+    )[:10]
+
+    context = {
+        "total_users": total_users,
+        "total_images": total_images,
+        "total_storage": total_storage,
+        "images_today": images_today,
+        "recent_users": recent_users,
+        "recent_images": recent_images,
+    }
+
+    return render(
+        request,
+        "uploads/admin_dashboard.html",
+        context
     )
