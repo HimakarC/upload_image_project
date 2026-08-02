@@ -106,6 +106,10 @@ STATIC_URL = (
     f"{AWS_S3_REGION_NAME}.amazonaws.com/"
 )
 
+STATICFILES_DIRS = [
+    BASE_DIR / "uploads" / "templates" / "uploads",
+]
+
 
 # ============================================================
 # MEDIA FILES
@@ -129,6 +133,7 @@ STORAGES = {
         "BACKEND": "storages.backends.s3.S3Storage",
     },
 }
+
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -194,4 +199,6 @@ USE_TZ = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [
+    BASE_DIR / "uploads" / "templates" / "uploads",
+]
