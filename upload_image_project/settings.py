@@ -125,8 +125,8 @@ AWS_S3_CUSTOM_DOMAIN = (
     f"{AWS_S3_REGION_NAME}.amazonaws.com"
 )
 
-MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
-STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
+MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/uploads/"
+STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
