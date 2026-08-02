@@ -11,6 +11,7 @@ phases:
 
   build:
     commands:
+      - python manage.py collectstatic --noinput
       - cp -r upload_image_project package/
       - cp -r uploads package/
       - cp manage.py package/
