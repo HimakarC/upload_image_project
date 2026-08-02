@@ -78,7 +78,10 @@ TEMPLATES = [
 WSGI_APPLICATION = 'upload_image_project.wsgi.application'
 
 
-# S3 CONFIG (NO SECRET KEYS NEEDED)
+# ============================================================
+# AWS S3 CONFIGURATION
+# ============================================================
+
 AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
 
 if not AWS_STORAGE_BUCKET_NAME:
@@ -93,11 +96,6 @@ AWS_S3_REGION_NAME = os.environ.get(
 
 AWS_QUERYSTRING_AUTH = False
 
-# S3 endpoint
-AWS_S3_ENDPOINT_URL = (
-    f"https://{AWS_STORAGE_BUCKET_NAME}.s3."
-    f"{AWS_S3_REGION_NAME}.amazonaws.com"
-)
 
 # ============================================================
 # STATIC FILES
@@ -105,8 +103,9 @@ AWS_S3_ENDPOINT_URL = (
 
 STATIC_URL = (
     f"https://{AWS_STORAGE_BUCKET_NAME}.s3."
-    f"{AWS_S3_REGION_NAME}.amazonaws.com/static/"
+    f"{AWS_S3_REGION_NAME}.amazonaws.com/"
 )
+
 
 # ============================================================
 # MEDIA FILES
@@ -117,8 +116,9 @@ MEDIA_URL = (
     f"{AWS_S3_REGION_NAME}.amazonaws.com/"
 )
 
+
 # ============================================================
-# STORAGE BACKENDS
+# STORAGE
 # ============================================================
 
 STORAGES = {
