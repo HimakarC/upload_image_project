@@ -195,4 +195,4 @@ STATICFILES_DIRS = [
     BASE_DIR / "static" / "uploads" / "templates" / "uploads",
 ]
 
-# STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = BASE_DIR / "staticfiles"
