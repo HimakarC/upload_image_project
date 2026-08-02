@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-g%-1^p51tc+hg-8p%m64n27zxi05$w!+tlmno-6rk&60*h5__*
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['*']
+
 
 LOGIN_REDIRECT_URL = '/upload/'
 LOGIN_URL = '/login/'
@@ -79,19 +79,6 @@ WSGI_APPLICATION = 'upload_image_project.wsgi.application'
 
 
 # S3 CONFIG (NO SECRET KEYS NEEDED)
-
-STORAGES = {
-    "default": {
-        "BACKEND": "storages.backends.s3.S3Storage",
-    },
-    "staticfiles": {
-        "BACKEND": "storages.backends.s3.S3Storage",
-        "OPTIONS": {
-            "location": "static",
-        },
-    },
-}
-
 AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
 
 if not AWS_STORAGE_BUCKET_NAME:
@@ -104,9 +91,35 @@ AWS_S3_REGION_NAME = os.environ.get(
     "us-east-1"
 )
 
-AWS_S3_SIGNATURE_VERSION = "s3v4"
-
 AWS_QUERYSTRING_AUTH = False
+
+# S3 endpoint
+AWS_S3_ENDPOINT_URL = (
+    f"https://{AWS_STORAGE_BUCKET_NAME}.s3."
+    f"{AWS_S3_REGION_NAME}.amazonaws.com"
+)
+
+# ============================================================
+# STATIC FILES
+# ============================================================
+
+STATIC_URL = (
+    f"https://{AWS_STORAGE_BUCKET_NAME}.s3."
+    f"{AWS_S3_REGION_NAME}.amazonaws.com/static/"
+)
+
+# ============================================================
+# MEDIA FILES
+# ============================================================
+
+MEDIA_URL = (
+    f"https://{AWS_STORAGE_BUCKET_NAME}.s3."
+    f"{AWS_S3_REGION_NAME}.amazonaws.com/"
+)
+
+# ============================================================
+# STORAGE BACKENDS
+# ============================================================
 
 STORAGES = {
     "default": {
@@ -116,17 +129,6 @@ STORAGES = {
         "BACKEND": "storages.backends.s3.S3Storage",
     },
 }
-
-MEDIA_URL = (
-    f"https://{AWS_STORAGE_BUCKET_NAME}.s3."
-    f"{AWS_S3_REGION_NAME}.amazonaws.com/"
-)
-
-AWS_S3_CUSTOM_DOMAIN = (
-    f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
-)
-
-STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -191,8 +193,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-STATICFILES_DIRS = [
-    BASE_DIR / "static" / "uploads" / "templates" / "uploads",
-]
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
