@@ -155,8 +155,8 @@ CREATE TABLE uploads_uploadedimage (
 
 
 CREATE INDEX images_user_id_index
-ON images(user_id);
+ON uploads_uploadedimage(user_id);
 
 
 CREATE INDEX images_uploaded_at_index
-ON images(uploaded_at);
+ON uploads_uploadedimage(uploaded_at);
