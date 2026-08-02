@@ -78,9 +78,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'upload_image_project.wsgi.application'
 
 
-# ============================================================
 # AWS S3 CONFIGURATION
-# ============================================================
 
 AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
 
@@ -97,9 +95,7 @@ AWS_S3_REGION_NAME = os.environ.get(
 AWS_QUERYSTRING_AUTH = False
 
 
-# ============================================================
 # STATIC FILES
-# ============================================================
 
 STATIC_URL = (
     f"https://{AWS_STORAGE_BUCKET_NAME}.s3."
@@ -111,9 +107,7 @@ STATICFILES_DIRS = [
 ]
 
 
-# ============================================================
 # MEDIA FILES
-# ============================================================
 
 MEDIA_URL = (
     f"https://{AWS_STORAGE_BUCKET_NAME}.s3."
@@ -121,9 +115,7 @@ MEDIA_URL = (
 )
 
 
-# ============================================================
 # STORAGE
-# ============================================================
 
 STORAGES = {
     "default": {
@@ -198,7 +190,3 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-STATICFILES_DIRS = [
-    BASE_DIR / "uploads" / "templates" / "uploads",
-]
