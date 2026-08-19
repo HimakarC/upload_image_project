@@ -63,7 +63,7 @@ urlpatterns = [
         name="delete_image"
     ),
     path(
-        "admin-dashboard/",
+        "admin_dashboard/",
         admin_dashboard,
         name="admin_dashboard"
     ),
