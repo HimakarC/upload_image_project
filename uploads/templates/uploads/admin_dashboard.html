@@ -1,3 +1,4 @@
+html
 {% extends 'uploads/base.html' %}
 
 {% block title %}
@@ -6,441 +7,1221 @@ Admin Dashboard
 
 {% block content %}
 
-<div class="admin-header">
+<div class="admin-layout">
 
-<div>
-    <h1>Admin Dashboard</h1>
+    <!-- ========================= -->
+    <!-- SIDEBAR -->
+    <!-- ========================= -->
 
-    <p>
-        Monitor users, uploads, and storage activity.
-    </p>
+    <aside class="admin-sidebar">
+
+        <div class="sidebar-brand">
+            <div class="brand-icon">◆</div>
+
+            <div>
+                <h2>UploadHub</h2>
+                <span>Administration</span>
+            </div>
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <a href="{% url 'admin_dashboard' %}" class="nav-item active">
+                <span class="nav-icon">▦</span>
+                Dashboard
+            </a>
+
+            <a href="{% url 'dashboard' %}" class="nav-item">
+                <span class="nav-icon">⌂</span>
+                User Dashboard
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <div class="admin-profile">
+
+                <div class="profile-avatar">
+                    {{ request.user.username|first|upper }}
+                </div>
+
+                <div class="profile-info">
+                    <strong>{{ request.user.username }}</strong>
+                    <span>Administrator</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ========================= -->
+    <!-- MAIN CONTENT -->
+    <!-- ========================= -->
+
+    <main class="admin-main">
+
+        <!-- TOP BAR -->
+
+        <header class="topbar">
+
+            <div>
+
+                <span class="breadcrumb">
+                    Administration / Dashboard
+                </span>
+
+                <h1>Dashboard Overview</h1>
+
+                <p>
+                    Monitor users, uploads, and storage activity.
+                </p>
+
+            </div>
+
+
+            <div class="topbar-actions">
+
+                <a
+                    href="{% url 'dashboard' %}"
+                    class="user-dashboard-btn"
+                >
+                    <span>⌂</span>
+                    User Dashboard
+                </a>
+
+            </div>
+
+        </header>
+
+
+        <!-- ========================= -->
+        <!-- STATISTICS -->
+        <!-- ========================= -->
+
+        <section class="stats-grid">
+
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <div class="stat-icon users-icon">
+                        ♟
+                    </div>
+
+                    <span class="stat-label">
+                        USERS
+                    </span>
+
+                </div>
+
+
+                <div class="stat-value">
+                    {{ total_users }}
+                </div>
+
+                <div class="stat-footer">
+                    <span class="status-dot"></span>
+                    Registered users
+                </div>
+
+            </div>
+
+
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <div class="stat-icon image-icon">
+                        ▧
+                    </div>
+
+                    <span class="stat-label">
+                        IMAGES
+                    </span>
+
+                </div>
+
+
+                <div class="stat-value">
+                    {{ total_images }}
+                </div>
+
+                <div class="stat-footer">
+                    <span class="status-dot"></span>
+                    Total uploads
+                </div>
+
+            </div>
+
+
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <div class="stat-icon storage-icon">
+                        ◈
+                    </div>
+
+                    <span class="stat-label">
+                        STORAGE
+                    </span>
+
+                </div>
+
+
+                <div class="stat-value storage-value">
+                    {{ total_storage|filesizeformat }}
+                </div>
+
+                <div class="stat-footer">
+                    Current storage usage
+                </div>
+
+            </div>
+
+
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <div class="stat-icon upload-icon">
+                        ↑
+                    </div>
+
+                    <span class="stat-label">
+                        TODAY
+                    </span>
+
+                </div>
+
+
+                <div class="stat-value">
+                    {{ images_today }}
+                </div>
+
+                <div class="stat-footer">
+                    Uploads today
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ========================= -->
+        <!-- RECENT USERS -->
+        <!-- ========================= -->
+
+        <section class="dashboard-section">
+
+            <div class="section-heading">
+
+                <div>
+                    <span class="section-label">
+                        USER MANAGEMENT
+                    </span>
+
+                    <h2>Recent Users</h2>
+
+                    <p>
+                        Latest users registered on the platform.
+                    </p>
+                </div>
+
+                <div class="record-count">
+                    {{ total_users }} Users
+                </div>
+
+            </div>
+
+
+            <div class="table-card">
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>USER</th>
+
+                                <th>EMAIL</th>
+
+                                <th>JOINED</th>
+
+                                <th>ROLE</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for user in recent_users %}
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="user-cell">
+
+                                        <div class="user-avatar">
+                                            {{ user.username|first|upper }}
+                                        </div>
+
+                                        <div>
+
+                                            <strong>
+                                                {{ user.username }}
+                                            </strong>
+
+                                            <span>
+                                                User account
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="email-text">
+                                        {{ user.email|default:"No email" }}
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="date-text">
+                                        {{ user.date_joined|date:"d M Y, H:i" }}
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    {% if user.is_staff %}
+
+                                        <span class="role-badge admin-badge">
+                                            Admin
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="role-badge user-badge">
+                                            User
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                            </tr>
+
+
+                            {% empty %}
+
+                            <tr>
+
+                                <td colspan="4" class="empty-state">
+                                    No users found.
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ========================= -->
+        <!-- RECENT UPLOADS -->
+        <!-- ========================= -->
+
+        <section class="dashboard-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="section-label">
+                        FILE ACTIVITY
+                    </span>
+
+                    <h2>Recent Uploads</h2>
+
+                    <p>
+                        Latest files uploaded by users.
+                    </p>
+
+                </div>
+
+                <div class="record-count">
+                    {{ total_images }} Images
+                </div>
+
+            </div>
+
+
+            <div class="table-card">
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>PREVIEW</th>
+
+                                <th>FILE</th>
+
+                                <th>USER</th>
+
+                                <th>TYPE</th>
+
+                                <th>SIZE</th>
+
+                                <th>UPLOADED</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for image in recent_images %}
+
+                            <tr>
+
+                                <!-- PREVIEW -->
+
+                                <td>
+
+                                    <div class="image-preview">
+
+                                        {% if image.thumbnail %}
+
+                                            <img
+                                                src="{{ image.thumbnail.url }}"
+                                                alt="{{ image.original_filename }}"
+                                            >
+
+                                        {% elif image.image %}
+
+                                            <img
+                                                src="{{ image.image.url }}"
+                                                alt="{{ image.original_filename }}"
+                                            >
+
+                                        {% else %}
+
+                                            <div class="no-preview">
+                                                ▧
+                                            </div>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- FILE NAME -->
+
+                                <td>
+
+                                    <div class="file-cell">
+
+                                        <strong>
+                                            {{ image.original_filename }}
+                                        </strong>
+
+                                        <span>
+                                            Uploaded file
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- USER -->
+
+                                <td>
+
+                                    <div class="upload-user">
+
+                                        <div class="mini-avatar">
+                                            {{ image.user.username|first|upper }}
+                                        </div>
+
+                                        {{ image.user.username }}
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- TYPE -->
+
+                                <td>
+
+                                    <span class="file-type">
+                                        {{ image.file_type }}
+                                    </span>
+
+                                </td>
+
+
+                                <!-- SIZE -->
+
+                                <td>
+
+                                    <span class="size-text">
+                                        {{ image.compressed_size|filesizeformat }}
+                                    </span>
+
+                                </td>
+
+
+                                <!-- DATE -->
+
+                                <td>
+
+                                    <span class="date-text">
+                                        {{ image.uploaded_at|date:"d M Y, H:i" }}
+                                    </span>
+
+                                </td>
+
+                            </tr>
+
+
+                            {% empty %}
+
+                            <tr>
+
+                                <td
+                                    colspan="6"
+                                    class="empty-state"
+                                >
+                                    No images uploaded yet.
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- FOOTER -->
+
+        <footer class="admin-footer">
+
+            <span>
+                UploadHub Administration
+            </span>
+
+            <span>
+                System Dashboard
+            </span>
+
+        </footer>
+
+    </main>
+
 </div>
 
-<a
-    href="{% url 'dashboard' %}"
-    class="button"
->
-    User Dashboard
-</a>
 
-</div>
-
-<!-- ============================= -->
-
-<!-- STATISTICS -->
-
-<!-- ============================= -->
-
-<div class="dashboard-grid">
-
-<div class="stat-card">
-
-    <h3>
-        Total Users
-    </h3>
-
-    <p>
-        {{ total_users }}
-    </p>
-
-</div>
-
-
-<div class="stat-card">
-
-    <h3>
-        Total Images
-    </h3>
-
-    <p>
-        {{ total_images }}
-    </p>
-
-</div>
-
-
-<div class="stat-card">
-
-    <h3>
-        Total Storage
-    </h3>
-
-    <p>
-        {{ total_storage|filesizeformat }}
-    </p>
-
-</div>
-
-
-<div class="stat-card">
-
-    <h3>
-        Uploads Today
-    </h3>
-
-    <p>
-        {{ images_today }}
-    </p>
-
-</div>
-
-</div>
-
-<!-- ============================= -->
-
-<!-- RECENT USERS -->
-
-<!-- ============================= -->
-
-<div class="admin-section">
-
-<div class="section-header">
-
-    <h2>
-        Recent Users
-    </h2>
-
-</div>
-
-
-<div class="table-container">
-
-    <table>
-
-        <thead>
-
-            <tr>
-
-                <th>
-                    Username
-                </th>
-
-                <th>
-                    Email
-                </th>
-
-                <th>
-                    Joined
-                </th>
-
-                <th>
-                    Status
-                </th>
-
-            </tr>
-
-        </thead>
-
-
-        <tbody>
-
-            {% for user in recent_users %}
-
-            <tr>
-
-                <td>
-                    {{ user.username }}
-                </td>
-
-                <td>
-                    {{ user.email|default:"No email" }}
-                </td>
-
-                <td>
-                    {{ user.date_joined|date:"d M Y, H:i" }}
-                </td>
-
-                <td>
-
-                    {% if user.is_staff %}
-
-                        <span class="status-admin">
-                            Admin
-                        </span>
-
-                    {% else %}
-
-                        <span class="status-user">
-                            User
-                        </span>
-
-                    {% endif %}
-
-                </td>
-
-            </tr>
-
-            {% empty %}
-
-            <tr>
-
-                <td colspan="4">
-                    No users found.
-                </td>
-
-            </tr>
-
-            {% endfor %}
-
-        </tbody>
-
-    </table>
-
-</div>
-
-
-</div>
-
-<!-- ============================= -->
-
-<!-- RECENT IMAGES -->
-
-<!-- ============================= -->
-
-<div class="admin-section">
-
-
-<div class="section-header">
-
-    <h2>
-        Recent Uploads
-    </h2>
-
-</div>
-
-
-<div class="table-container">
-
-    <table>
-
-        <thead>
-
-            <tr>
-
-                <th>
-                    Preview
-                </th>
-
-                <th>
-                    Filename
-                </th>
-
-                <th>
-                    User
-                </th>
-
-                <th>
-                    File Type
-                </th>
-
-                <th>
-                    Size
-                </th>
-
-                <th>
-                    Uploaded
-                </th>
-
-            </tr>
-
-        </thead>
-
-
-        <tbody>
-
-            {% for image in recent_images %}
-
-            <tr>
-
-                <td>
-
-                    {% if image.thumbnail %}
-
-                        <img
-                            src="{{ image.thumbnail.url }}"
-                            alt="{{ image.original_filename }}"
-                            class="admin-thumbnail"
-                        >
-
-                    {% elif image.image %}
-
-                        <img
-                            src="{{ image.image.url }}"
-                            alt="{{ image.original_filename }}"
-                            class="admin-thumbnail"
-                        >
-
-                    {% endif %}
-
-                </td>
-
-
-                <td>
-
-                    {{ image.original_filename }}
-
-                </td>
-
-
-                <td>
-
-                    {{ image.user.username }}
-
-                </td>
-
-
-                <td>
-
-                    {{ image.file_type }}
-
-                </td>
-
-
-                <td>
-
-                    {{ image.compressed_size|filesizeformat }}
-
-                </td>
-
-
-                <td>
-
-                    {{ image.uploaded_at|date:"d M Y, H:i" }}
-
-                </td>
-
-            </tr>
-
-            {% empty %}
-
-            <tr>
-
-                <td colspan="6">
-
-                    No images uploaded yet.
-
-                </td>
-
-            </tr>
-
-            {% endfor %}
-
-        </tbody>
-
-    </table>
-
-</div>
-
-
-</div>
 
 <style>
 
-.admin-header {
+/* ================================= */
+/* GLOBAL ADMIN LAYOUT */
+/* ================================= */
+
+.admin-layout {
 
     display: flex;
 
-    justify-content: space-between;
+    min-height: calc(100vh - 40px);
+
+    margin: -20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0b1020 0%,
+            #11182d 50%,
+            #0c1224 100%
+        );
+
+    color: #f5f7ff;
+
+}
+
+
+/* ================================= */
+/* SIDEBAR */
+/* ================================= */
+
+.admin-sidebar {
+
+    width: 250px;
+
+    min-width: 250px;
+
+    padding: 28px 18px;
+
+    border-right:
+        1px solid
+        rgba(255,255,255,0.08);
+
+    background:
+        rgba(7,11,25,0.75);
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+
+.sidebar-brand {
+
+    display: flex;
 
     align-items: center;
 
-    margin-bottom: 30px;
+    gap: 12px;
 
-    gap: 20px;
-
-}
-
-
-.admin-header h1 {
-
-    margin-bottom: 5px;
+    padding: 5px 10px 35px;
 
 }
 
 
-.admin-header p {
+.brand-icon {
 
-    opacity: 0.7;
+    width: 42px;
 
-}
+    height: 42px;
 
+    display: flex;
 
-.dashboard-grid {
+    align-items: center;
 
-    display: grid;
+    justify-content: center;
 
-    grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(200px, 1fr)
-        );
-
-    gap: 20px;
-
-    margin-bottom: 40px;
-
-}
-
-
-.stat-card {
-
-    padding: 25px;
-
-    text-align: center;
-
-    border-radius: 20px;
+    border-radius: 12px;
 
     background:
-        rgba(
-            255,
-            255,
-            255,
-            0.1
+        linear-gradient(
+            135deg,
+            #7c5cff,
+            #4f8cff
+        );
+
+    font-size: 18px;
+
+    box-shadow:
+        0 8px 25px
+        rgba(92,92,255,0.3);
+
+}
+
+
+.sidebar-brand h2 {
+
+    margin: 0;
+
+    font-size: 18px;
+
+}
+
+
+.sidebar-brand span {
+
+    font-size: 11px;
+
+    color: #8992ad;
+
+}
+
+
+.sidebar-nav {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+}
+
+
+.nav-item {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 13px 14px;
+
+    border-radius: 12px;
+
+    color: #8992ad;
+
+    text-decoration: none;
+
+    transition: 0.25s ease;
+
+    font-size: 14px;
+
+}
+
+
+.nav-item:hover {
+
+    color: white;
+
+    background:
+        rgba(255,255,255,0.06);
+
+}
+
+
+.nav-item.active {
+
+    color: white;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(124,92,255,0.25),
+            rgba(79,140,255,0.08)
         );
 
     border:
         1px solid
-        rgba(
-            255,
-            255,
-            255,
-            0.15
+        rgba(124,92,255,0.25);
+
+}
+
+
+.nav-icon {
+
+    width: 25px;
+
+    text-align: center;
+
+    font-size: 17px;
+
+}
+
+
+.sidebar-bottom {
+
+    margin-top: auto;
+
+    padding-top: 25px;
+
+    border-top:
+        1px solid
+        rgba(255,255,255,0.07);
+
+}
+
+
+.admin-profile {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+}
+
+
+.profile-avatar {
+
+    width: 38px;
+
+    height: 38px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        linear-gradient(
+            135deg,
+            #7c5cff,
+            #4f8cff
         );
-
-}
-
-
-.stat-card h3 {
-
-    margin-bottom: 10px;
-
-}
-
-
-.stat-card p {
-
-    font-size: 32px;
 
     font-weight: bold;
 
 }
 
 
-.admin-section {
+.profile-info {
 
-    margin-top: 30px;
+    display: flex;
 
-}
-
-
-.section-header {
-
-    margin-bottom: 15px;
+    flex-direction: column;
 
 }
 
 
-.table-container {
+.profile-info strong {
+
+    font-size: 13px;
+
+}
+
+
+.profile-info span {
+
+    font-size: 11px;
+
+    color: #737d98;
+
+}
+
+
+/* ================================= */
+/* MAIN */
+/* ================================= */
+
+.admin-main {
+
+    flex: 1;
+
+    padding: 38px 42px;
+
+    min-width: 0;
+
+}
+
+
+/* ================================= */
+/* TOP BAR */
+/* ================================= */
+
+.topbar {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-start;
+
+    margin-bottom: 35px;
+
+}
+
+
+.breadcrumb {
+
+    display: block;
+
+    color: #707b98;
+
+    font-size: 12px;
+
+    margin-bottom: 9px;
+
+}
+
+
+.topbar h1 {
+
+    margin: 0;
+
+    font-size: 31px;
+
+    letter-spacing: -0.5px;
+
+}
+
+
+.topbar p {
+
+    margin-top: 7px;
+
+    color: #858fa9;
+
+    font-size: 14px;
+
+}
+
+
+.user-dashboard-btn {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 11px 17px;
+
+    border-radius: 11px;
+
+    text-decoration: none;
+
+    color: white;
+
+    font-size: 13px;
+
+    background:
+        rgba(255,255,255,0.06);
+
+    border:
+        1px solid
+        rgba(255,255,255,0.1);
+
+    transition: 0.25s ease;
+
+}
+
+
+.user-dashboard-btn:hover {
+
+    background:
+        rgba(255,255,255,0.11);
+
+    transform: translateY(-1px);
+
+}
+
+
+/* ================================= */
+/* STATISTICS */
+/* ================================= */
+
+.stats-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            4,
+            minmax(0, 1fr)
+        );
+
+    gap: 18px;
+
+    margin-bottom: 42px;
+
+}
+
+
+.stat-card {
+
+    padding: 22px;
+
+    border-radius: 17px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,0.07),
+            rgba(255,255,255,0.025)
+        );
+
+    border:
+        1px solid
+        rgba(255,255,255,0.08);
+
+    box-shadow:
+        0 15px 40px
+        rgba(0,0,0,0.18);
+
+    transition: 0.25s ease;
+
+}
+
+
+.stat-card:hover {
+
+    transform: translateY(-3px);
+
+    border-color:
+        rgba(124,92,255,0.35);
+
+}
+
+
+.stat-top {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+}
+
+
+.stat-icon {
+
+    width: 43px;
+
+    height: 43px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 12px;
+
+    font-size: 20px;
+
+}
+
+
+.users-icon {
+
+    background:
+        rgba(124,92,255,0.16);
+
+    color: #9a84ff;
+
+}
+
+
+.image-icon {
+
+    background:
+        rgba(55,170,255,0.14);
+
+    color: #58b8ff;
+
+}
+
+
+.storage-icon {
+
+    background:
+        rgba(47,207,145,0.14);
+
+    color: #4fe0a1;
+
+}
+
+
+.upload-icon {
+
+    background:
+        rgba(255,170,70,0.14);
+
+    color: #ffb35c;
+
+}
+
+
+.stat-label {
+
+    font-size: 10px;
+
+    letter-spacing: 1.3px;
+
+    color: #727d98;
+
+}
+
+
+.stat-value {
+
+    margin-top: 22px;
+
+    font-size: 29px;
+
+    font-weight: 700;
+
+    letter-spacing: -0.5px;
+
+}
+
+
+.storage-value {
+
+    font-size: 24px;
+
+}
+
+
+.stat-footer {
+
+    margin-top: 9px;
+
+    color: #707b95;
+
+    font-size: 11px;
+
+}
+
+
+.status-dot {
+
+    display: inline-block;
+
+    width: 6px;
+
+    height: 6px;
+
+    margin-right: 5px;
+
+    border-radius: 50%;
+
+    background: #4fe0a1;
+
+}
+
+
+/* ================================= */
+/* SECTIONS */
+/* ================================= */
+
+.dashboard-section {
+
+    margin-bottom: 40px;
+
+}
+
+
+.section-heading {
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: space-between;
+
+    margin-bottom: 16px;
+
+}
+
+
+.section-label {
+
+    font-size: 10px;
+
+    letter-spacing: 1.4px;
+
+    color: #7c5cff;
+
+}
+
+
+.section-heading h2 {
+
+    margin: 5px 0 4px;
+
+    font-size: 20px;
+
+}
+
+
+.section-heading p {
+
+    margin: 0;
+
+    font-size: 12px;
+
+    color: #707b95;
+
+}
+
+
+.record-count {
+
+    padding: 7px 12px;
+
+    border-radius: 8px;
+
+    background:
+        rgba(255,255,255,0.05);
+
+    color: #8c96ad;
+
+    font-size: 11px;
+
+}
+
+
+/* ================================= */
+/* TABLE */
+/* ================================= */
+
+.table-card {
+
+    overflow: hidden;
+
+    border-radius: 16px;
+
+    border:
+        1px solid
+        rgba(255,255,255,0.08);
+
+    background:
+        rgba(255,255,255,0.035);
+
+}
+
+
+.table-wrapper {
 
     overflow-x: auto;
 
@@ -451,93 +1232,409 @@ table {
 
     width: 100%;
 
+    min-width: 750px;
+
     border-collapse: collapse;
-
-    background:
-        rgba(
-            255,
-            255,
-            255,
-            0.08
-        );
-
-    border-radius: 15px;
-
-    overflow: hidden;
 
 }
 
 
-th,
-td {
+thead {
 
-    padding: 14px;
-
-    text-align: left;
-
-    border-bottom:
-        1px solid
-        rgba(
-            255,
-            255,
-            255,
-            0.15
-        );
+    background:
+        rgba(255,255,255,0.035);
 
 }
 
 
 th {
 
+    padding: 14px 18px;
+
+    text-align: left;
+
+    font-size: 10px;
+
+    letter-spacing: 1px;
+
+    color: #68738e;
+
+    font-weight: 600;
+
+}
+
+
+td {
+
+    padding: 15px 18px;
+
+    border-top:
+        1px solid
+        rgba(255,255,255,0.055);
+
+    font-size: 13px;
+
+}
+
+
+tbody tr {
+
+    transition: 0.2s ease;
+
+}
+
+
+tbody tr:hover {
+
+    background:
+        rgba(255,255,255,0.035);
+
+}
+
+
+/* ================================= */
+/* USER CELL */
+/* ================================= */
+
+.user-cell {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+}
+
+
+.user-avatar {
+
+    width: 34px;
+
+    height: 34px;
+
+    border-radius: 10px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        rgba(124,92,255,0.15);
+
+    color: #a995ff;
+
+    font-weight: 600;
+
+}
+
+
+.user-cell strong,
+.file-cell strong {
+
+    display: block;
+
+    font-size: 13px;
+
+}
+
+
+.user-cell span,
+.file-cell span {
+
+    display: block;
+
+    margin-top: 3px;
+
+    font-size: 10px;
+
+    color: #69738c;
+
+}
+
+
+.email-text,
+.date-text,
+.size-text {
+
+    color: #8d97ad;
+
+    font-size: 12px;
+
+}
+
+
+/* ================================= */
+/* BADGES */
+/* ================================= */
+
+.role-badge {
+
+    display: inline-flex;
+
+    padding: 5px 10px;
+
+    border-radius: 7px;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+}
+
+
+.admin-badge {
+
+    color: #b6a7ff;
+
+    background:
+        rgba(124,92,255,0.14);
+
+}
+
+
+.user-badge {
+
+    color: #67dca8;
+
+    background:
+        rgba(47,207,145,0.1);
+
+}
+
+
+/* ================================= */
+/* IMAGE PREVIEW */
+/* ================================= */
+
+.image-preview {
+
+    width: 50px;
+
+    height: 50px;
+
+    overflow: hidden;
+
+    border-radius: 10px;
+
+    background:
+        rgba(255,255,255,0.05);
+
+}
+
+
+.image-preview img {
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+
+}
+
+
+.no-preview {
+
+    width: 100%;
+
+    height: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: #68738e;
+
+}
+
+
+/* ================================= */
+/* UPLOAD USER */
+/* ================================= */
+
+.upload-user {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    color: #aeb6c8;
+
+    font-size: 12px;
+
+}
+
+
+.mini-avatar {
+
+    width: 27px;
+
+    height: 27px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 8px;
+
+    background:
+        rgba(79,140,255,0.13);
+
+    color: #6eb5ff;
+
+    font-size: 10px;
+
     font-weight: bold;
 
 }
 
 
-.admin-thumbnail {
+.file-type {
 
-    width: 60px;
+    display: inline-block;
 
-    height: 60px;
+    padding: 5px 8px;
 
-    object-fit: cover;
+    border-radius: 6px;
 
-    border-radius: 10px;
+    background:
+        rgba(255,255,255,0.05);
 
-}
+    color: #929cb1;
 
-
-.status-admin {
-
-    padding: 5px 10px;
-
-    border-radius: 10px;
-
-    font-size: 12px;
+    font-size: 10px;
 
 }
 
 
-.status-user {
+/* ================================= */
+/* EMPTY */
+/* ================================= */
 
-    padding: 5px 10px;
+.empty-state {
 
-    border-radius: 10px;
+    text-align: center;
 
-    font-size: 12px;
+    padding: 35px;
+
+    color: #68738e;
 
 }
 
 
-@media (
-    max-width: 768px
-) {
+/* ================================= */
+/* FOOTER */
+/* ================================= */
 
-    .admin-header {
+.admin-footer {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    padding: 25px 0 5px;
+
+    color: #555f78;
+
+    font-size: 10px;
+
+}
+
+
+/* ================================= */
+/* RESPONSIVE */
+/* ================================= */
+
+@media (max-width: 1100px) {
+
+    .stats-grid {
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+
+    }
+
+}
+
+
+@media (max-width: 800px) {
+
+    .admin-sidebar {
+
+        display: none;
+
+    }
+
+
+    .admin-main {
+
+        padding: 25px 18px;
+
+    }
+
+
+    .topbar {
 
         flex-direction: column;
 
+        gap: 20px;
+
+    }
+
+
+    .topbar h1 {
+
+        font-size: 25px;
+
+    }
+
+
+    .stats-grid {
+
+        grid-template-columns: 1fr 1fr;
+
+    }
+
+}
+
+
+@media (max-width: 500px) {
+
+    .stats-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .section-heading {
+
         align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 12px;
+
+    }
+
+
+    .admin-footer {
+
+        flex-direction: column;
+
+        gap: 7px;
 
     }
 
